@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>フォーム画面</title>
+</head>
+
+<body>
+  <h1>フォーム>入力</h1>
+  <form action="formCheck.html">
+    <fieldset>
+      <legend>フォーム</legend>
+      
+      <label for="Name" >名前:</label>
+      <input type="text" id="Name"  name="name_first">
+      <input type~"text" id="Name"  name="name_last"> 
+      <br> 
+
+      <label for="Sex" >性別:</label>
+      <input type="radio" id="Sex" name="sex" value="men">男性
+      <input type="radio" id="Sex" name="sex" value="woman">女性
+      <br>
+
+      <label for="PostNumber" >郵便番号:</label>
+      <input type="text" id="PostNumber" name="post_first">
+      -
+      <input type="text" id="PostNumber"  name="post_last">
+      <br>
+
+      <label for="Prefecture">都道府県:</label>
+      <select id="Prefecture" name="prefecture" size=1>
+        <option value="--">--</option>
+        <option value="東京都">東京都</option>
+        <option value="埼玉県">埼玉県</option>
+        <option value="群馬県">群馬県</option>
+      </select>
+      <br>
+
+      <label for="MailAddress">メールアドレス:</label>
+      <input type="text" for="MailAddress" name="mail">
+      <br>
+
+      <label name="hobby" for="Hobby">趣味</label>
+        <input type="checkbox" id="Hobby" name="hobby" value="音楽鑑賞">音楽鑑賞 
+        <input type="checkbox" id="Hobby" name="hobby" value="映画鑑賞">音楽鑑賞
+        <input type="checkbox" id="Hobby" name="hobby" value="その他">その他
+        <input type="text"  id="Hobby">
+      </label>
+      <br>
+
+      <label for="Opinion" name="opinion">ご意見</label>
+      <textarea id="Opinion"></textarea>
+      <br>
+
+      <input type="submit" value="確認">
+    </fieldset>
+  </form>
+  <p>Copyright 2014</p>
+</body>
+</html>

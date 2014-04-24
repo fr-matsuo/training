@@ -13,44 +13,44 @@
       <legend>フォーム</legend>
       
       <label for="Name">名前:</label>
-      <input type="text" id="Name" name="name_first">
-      <input type="text" id="Name" name="name_last"> 
+      <input type="text" name="Name" id="name_first ">
+      <input type="text" name="Name" id"name_last"> 
       <br> 
 
       <label for="Sex">性別:</label>
-      <input type="radio" id="Sex" name="sex" value="men">男性
-      <input type="radio" id="Sex" name="sex" value="woman">女性
+      <input type="radio" name="Sex" id="men"><label for="men">男性</label>
+      <input type="radio" name="Sex" id="woman"><label for="woman">女性</label>
       <br>
 
       <label for="PostNumber">郵便番号:</label>
-      <input type="text" id="PostNumber" name="post_first">
+      <input type="text" name="PostNumber" id="post_first">
       -
-      <input type="text" id="PostNumber"  name="post_last">
+      <input type="text" name="PostNumber" id="post_last">
       <br>
 
       <label for="Prefecture">都道府県:</label>
-      <select id="Prefecture" name="prefecture" size=1>
-        <option value="--">--</option>
-        <option value="東京都">東京都</option>
-        <option value="埼玉県">埼玉県</option>
-        <option value="群馬県">群馬県</option>
+      <select name="Prefecture" id="prefecture" size=1>
+        <option id="--">--</option>
+        <option id="Tokyo">東京都</option>
+        <option id="Saitama">埼玉県</option>
+        <option id="Gunma">群馬県</option>
       </select>
       <br>
 
       <label for="MailAddress">メールアドレス:</label>
-      <input type="text" id="MailAddress" name="mail">
+      <input type="text" name="MailAddress" id="mail">
       <br>
 
       <label name="hobby" for="Hobby">趣味</label>
-        <input type="checkbox" id="Hobby" name="hobby" value="音楽鑑賞">音楽鑑賞 
-        <input type="checkbox" id="Hobby" name="hobby" value="映画鑑賞">音楽鑑賞
-        <input type="checkbox" id="Hobby" name="hobby" value="その他">その他
-        <input type="text" id="Hobby">
+        <input type="checkbox" name="Hobby" id="music"><label for="music">音楽鑑賞</label>
+        <input type="checkbox" name="Hobby" id="movie"><label for="movie">音楽鑑賞</label>
+        <input type="checkbox" name="Hobby" id="other"><label for="other">その他</label>
+        <input type="text" name="Hobby" id="otherDescript">
       </label>
       <br>
 
-      <label for="Opinion" name="opinion">ご意見</label>
-      <textarea id="Opinion"></textarea>
+      <label for="Opinion">ご意見</label>
+      <textarea id="Opinion" name=opinion></textarea>
       <br>
 
       <input type="submit" value="確認">

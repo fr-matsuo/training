@@ -8,28 +8,29 @@
 
 <body>
   <h1>フォーム>入力</h1>
+
   <form action="formCheck.html">
     <fieldset>
       <legend>フォーム</legend>
       
-      <label name="Name">名前:</label>
-      <input type="text" name="Name" id="name_first">
-      <input type="text" name="Name" id="name_last"> 
+      <label>名前:</label>
+      <input type="text" name="name_first" id="name_first">
+      <input type="text" name="name_last" id="name_last"> 
       <br> 
 
-      <label name="Sex">性別:</label>
-      <input type="radio" name="Sex" id="men" value="man"><label for="men">男性</label>
-      <input type="radio" name="Sex" id="woman" va;ie="woman"><label for="woman">女性</label>
+      <label>性別:</label>
+      <input type="radio" name="man" id="man" value="man"><label for="man">男性</label>
+      <input type="radio" name="woman" id="woman" va;ie="woman"><label for="woman">女性</label>
       <br>
 
-      <label name="PostNumber">郵便番号:</label>
-      <input type="text" name="PostNumber" id="post_first">
+      <label>郵便番号:</label>
+      <input type="text" name="post_first" id="post_first">
       -
-      <input type="text" name="PostNumber" id="post_last">
+      <input type="text" name="post_last" id="post_last">
       <br>
 
-      <label name="Prefecture">都道府県:</label>
-      <select name="Prefecture" id="prefecture" size=1>
+      <label>都道府県:</label>
+      <select name="prefecture" id="prefecture" size=1>
         <option id="--" value="--">--</option>
         <option id="Tokyo" value="Tokyo">東京都</option>
         <option id="Saitama" value="Saitama">埼玉県</option>
@@ -37,25 +38,25 @@
       </select>
       <br>
 
-      <label name="MailAddress">メールアドレス:</label>
-      <input type="text" name="MailAddress" id="mail">
+      <label>メールアドレス:</label>
+      <input type="text" name="mail_address" id="mail">
       <br>
 
-      <label name="Hobby">趣味</label>
-        <input type="checkbox" name="Hobby" id="music" value="music"><label for="music">音楽鑑賞</label>
-        <input type="checkbox" name="Hobby" id="movie" value="movie"><label for="movie">音楽鑑賞</label>
-        <input type="checkbox" name="Hobby" id="other" value="other"><label for="other">その他</label>
-        <input type="text" name="Hobby" id="otherDescript">
+      <label>趣味</label>
+        <input type="checkbox" name="music" id="music" value="music"><label for="music">音楽鑑賞</label>
+        <input type="checkbox" name="movie" id="movie" value="movie"><label for="movie">映画鑑賞</label>
+        <input type="checkbox" name="other" id="other" value="other"><label for="other">その他</label>
+        <input type="text" name="other_descript" id="other_descript">
       </label>
       <br>
 
-      <label name="Opinion">ご意見</label>
-      <textarea id="Opinion" name="opinion"></textarea>
+      <label>ご意見</label>
+      <textarea id="opinion" name="opinion"></textarea>
       <br>
 
       <input type="submit" value="確認">
     </fieldset>
   </form>
-  <p>Copyright 2014</p>
+   <p>Copyright 2014</p>
 </body>
 </html>

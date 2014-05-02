@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <link rel="stylesheet" type="text/css" href="common.css">
+  <link rel="stylesheet" type="text/css" href="formCheck.css">
+  <title>確認画面</title>
+</head>
+
+<body>
+  <header>
+    <h1>フォーム>確認</h1>
+  </header>
+
+  <section>
+    <form>
+      <p>名前：山田太郎</p>
+      
+      <p>性別:男性</p>
+      
+      <p>郵便番号:150-0002</p>
+      
+      <p>都道府県:東京都</p>
+      
+      <p>メールアドレス:
+        <?php
+          echo $_POST['mail_address'];
+        ?>
+      </p>
+      
+      <p>趣味:その他(サッカー)</p>
+      
+      <p>ご意見:よろしくお願いします</p>
+      
+      <input type="submit" value="戻る" formaction="form.php">
+      <input type="submit" value="送信" formaction="finish.php">
+    </form>
+  </section>
+
+  <footer>
+    <p>Copyright 2014</p>
+  </footer>
+</body>
+</html>

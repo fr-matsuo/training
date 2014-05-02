@@ -16,23 +16,62 @@
 
   <section>
     <form>
-      <p>名前：山田太郎</p>
-      
-      <p>性別:男性</p>
-      
-      <p>郵便番号:150-0002</p>
-      
-      <p>都道府県:東京都</p>
-      
-      <p>メールアドレス:
+      <p>
+        名前：
         <?php
-          echo $_POST['mail_address'];
+          printf("%s %s", $_POST['name_first'] ,$_POST['name_last']);
         ?>
       </p>
       
-      <p>趣味:その他(サッカー)</p>
+      <p>
+        性別:
+        <?php
+          printf("%s", $_POST['sex']);
+        ?>
+      </p>
       
-      <p>ご意見:よろしくお願いします</p>
+      <p>
+        郵便番号:
+        <?php
+          printf("%s-%s", $_POST['post_first'], $_POST['post_last']);
+        ?>
+      </p>
+      
+      <p>
+        都道府県:
+        <?php
+          printf("%s", $_POST['prefecture']);
+        ?>
+      </p>
+      
+      <p>
+        メールアドレス:
+        <?php
+          printf("%s", $_POST['mail_address']);
+        ?>
+      </p>
+      
+      <p>趣味:
+        <?php
+          //チェックしたボックス一覧を取得・表示
+          $checkList = $_POST['hobby'];
+          $length    = count($checkList);
+          for ($i = 0; $i < $length-1; $i++ ) {
+            printf("%s,", $checkList[$i]);
+          }
+          printf("%s", $checkList[$length-1]);
+          //その他ならそれを表示
+          if (in_array('other', $checkList)) {
+            printf("(%s)", $_POST['other_descript']);
+          }
+        ?>
+      </p>
+      
+      <p>ご意見:
+        <?php
+          printf("%s", $_POST['opinion']);
+        ?>
+      </p>
       
       <input type="submit" value="戻る" formaction="form.php">
       <input type="submit" value="送信" formaction="finish.php">

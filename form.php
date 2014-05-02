@@ -49,9 +49,9 @@
         <br>
         
         <label>趣味</label>
-        <input type="checkbox" name="hobby" id="music" value="music"><label for="music">音楽鑑賞</label>
-        <input type="checkbox" name="hobby" id="movie" value="movie"><label for="movie">映画鑑賞</label>
-        <input type="checkbox" name="hobby" id="other" value="other"><label for="other">その他</label>
+        <input type="checkbox" name="hobby[]" id="music" value="music"><label for="music">音楽鑑賞</label>
+        <input type="checkbox" name="hobby[]" id="movie" value="movie"><label for="movie">映画鑑賞</label>
+        <input type="checkbox" name="hobby[]" id="other" value="other"><label for="other">その他</label>
         <input type="text" name="other_descript" id="other_descript">
         <br>
         

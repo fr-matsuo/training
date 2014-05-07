@@ -23,7 +23,17 @@
             printf("%s ", $msg);
           }
         }
+        //メールアドレスの書式チェック
+        function isMailAddress($address) {
+          if (substr_count($address, '@') != 1) {return false;}
+          if (substr_count($address, ' ') != 0) {return false;}
+          if (strstr($address, '@')       == '@') {return false;}
+          if (strstr($address, '@', true) == '')  {return false;}
+           
+          return true;
+        }
       ?>
+      
       <?php
         foreach ($_POS as $value) {
           if (is_array($value)) {
@@ -38,12 +48,16 @@
       <p>
         名前：
         <?php
-          $ERROR_MESSAGE_NO_FIRST_NAME = "姓を入力してください。";
-          $ERROR_MESSAGE_NO_LAST_NAME  = "名を入力してください。";
+          $ERROR_MESSAGE_NO_FIRST_NAME   = "姓を入力してください。";
+          $ERROR_MESSAGE_NO_LAST_NAME    = "名を入力してください。";
+          $ERROR_MESSAGE_OVER_FIRST_NAME = "姓は50字以内で入力してください。";
+          $ERROR_MESSAGE_OVER_LAST_NAME  = "名は50字以内で入力してください。";
           $nameErrors = array();
 
-          if (empty($_POST['name_first'])) {array_push($nameErrors, $ERROR_MESSAGE_NO_FIRST_NAME);}
-          if (empty($_POST['name_last' ])) {array_push($nameErrors, $ERROR_MESSAGE_NO_LAST_NAME );}
+          if (empty($_POST['name_first']))          {array_push($nameErrors, $ERROR_MESSAGE_NO_FIRST_NAME   );}
+          if (empty($_POST['name_last' ]))          {array_push($nameErrors, $ERROR_MESSAGE_NO_LAST_NAME    );}
+          if (mb_strlen($_POST['name_first']) > 50) {array_push($nameErrors, $ERROR_MESSAGE_OVER_FIRST_NAME );}
+          if (mb_strlen($_POST['name_last' ]) > 50) {array_push($nameErrors, $ERROR_MESSAGE_OVER_LAST_NAME  );}
 
           //表示
           if (empty($nameErrors)) {
@@ -107,10 +121,15 @@
       <p>
         メールアドレス:
         <?php
-          $ERROR_MESSAGE_NO_MAIL_ADDRESS = "メールアドレスを入力してください。";
+          $ERROR_MESSAGE_NO_MAIL_ADDRESS      = "メールアドレスを入力してください。";
+          $ERROR_MESSAGE_ILLEGAL_MAIL_ADDRESS = "メールアドレスを正しく入力してください。";
           $mailErrors = array();
 
-          if (empty($_POST['mail_address'])) {array_push($mailErrors, $ERROR_MESSAGE_NO_MAIL_ADDRESS);}
+          if (empty($_POST['mail_address'])) {
+            array_push($mailErrors, $ERROR_MESSAGE_NO_MAIL_ADDRESS);
+          } else if (isMailAddress($_POST['mail_address']) == false) {
+            array_push($mailErrors, $ERROR_MESSAGE_ILLEGAL_MAIL_ADDRESS);
+          }
 
           if (empty($mailErrors)) {
             printf("%s", $_POST['mail_address']);

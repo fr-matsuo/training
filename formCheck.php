@@ -16,53 +16,122 @@
 
   <section>
     <form>
+      <?php
+        //エラーメッセージ配列を横一列で出力
+        function outErrorMessage($errorMessages) {
+          foreach($errorMessages as $msg) {
+            printf("%s ", $msg);
+          }
+        }
+      ?>
       <p>
         名前：
         <?php
-          printf("%s %s", $_POST['name_first'] ,$_POST['name_last']);
+          $ERROR_MESSAGE_NO_FIRST_NAME = "姓を入力してください。";
+          $ERROR_MESSAGE_NO_LAST_NAME  = "名を入力してください。";
+          $nameErrors = array();
+
+          if (empty($_POST['name_first'])) {array_push($nameErrors, $ERROR_MESSAGE_NO_FIRST_NAME);}
+          if (empty($_POST['name_last' ])) {array_push($nameErrors, $ERROR_MESSAGE_NO_LAST_NAME );}
+
+          //表示
+          if (empty($nameErrors)) {
+            printf("%s %s", $_POST['name_first'] ,$_POST['name_last']);
+          } else {
+            outErrorMessage($nameErrors);
+          } 
         ?>
       </p>
-      
       <p>
-        性別:
+        性別：
         <?php
-          printf("%s", $_POST['sex']);
+          $ERROR_MESSAGE_NO_SEX = "性別を選択してください。";
+          $sexErrors = array();
+
+          if (empty($_POST['sex'])) {array_push($sexErrors, $ERROR_MESSAGE_NO_SEX);}
+
+          $errorNum = count($sexErrors);
+
+          //表示 
+          if ($errorNum == 0) {
+            printf("%s", $_POST['sex']);
+          } else {
+            outErrorMessage($sexErrors);
+          }
         ?>
       </p>
-      
+       
       <p>
         郵便番号:
         <?php
-          printf("%s-%s", $_POST['post_first'], $_POST['post_last']);
+          $ERROR_MESSAGE_NO_POST_NUMBER = "郵便番号を入力してくださいい。";
+          $postErrors = array();
+
+          if (empty($_POST['post_first']) || empty($_POST['post_last'])) {array_push($postErrors, $ERROR_MESSAGE_NO_POST_NUMBER);}
+
+          if (empty($postErrors)) {
+            printf("%s-%s", $_POST['post_first'], $_POST['post_last']);
+          } else {
+            outErrorMessage($postErrors);
+          }
         ?>
       </p>
       
       <p>
         都道府県:
         <?php
-          printf("%s", $_POST['prefecture']);
+          $ERROR_MESSAGE_NO_PREFECTURE = "都道府県を入力してください。";
+          $prefectureErrors = array();
+          
+          if ($_POST['prefecture'] == '--') {array_push($prefectureErrors, $ERROR_MESSAGE_NO_PREFECTURE);}
+
+          if (empty($prefectureErrors)) {
+            printf("%s", $_POST['prefecture']);
+          } else {
+            outErrorMessage($prefectureErrors);
+          }
         ?>
       </p>
       
       <p>
         メールアドレス:
         <?php
-          printf("%s", $_POST['mail_address']);
+          $ERROR_MESSAGE_NO_MAIL_ADDRESS = "メールアドレスを入力してください。";
+          $mailErrors = array();
+
+          if (empty($_POST['mail_address'])) {array_push($mailErrors, $ERROR_MESSAGE_NO_MAIL_ADDRESS);}
+
+          if (empty($mailErrors)) {
+            printf("%s", $_POST['mail_address']);
+          } else {
+            outErrorMessage($mailErrors);
+          }
         ?>
       </p>
       
       <p>趣味:
         <?php
+          $ERROR_MESSAGE_NO_OTHER = "その他の詳細を入力してください。";
+          $hobbyErrors = array();
+
           //チェックしたボックス一覧を取得・表示
           $checkList = $_POST['hobby'];
           $length    = count($checkList);
-          for ($i = 0; $i < $length-1; $i++ ) {
-            printf("%s,", $checkList[$i]);
+          if (in_array('その他', $checkList) && empty($_POST['other_descript'])) {
+            array_push($hobbyErrors, $ERROR_MESSAGE_NO_OTHER);
           }
-          printf("%s", $checkList[$length-1]);
-          //その他ならそれを表示
-          if (in_array('other', $checkList)) {
-            printf("(%s)", $_POST['other_descript']);
+
+          if (empty($hobbyErrors)) {
+            //表示
+            for ($i = 0; $i < $length-1; $i++ ) {
+              printf("%s,", $checkList[$i]);
+            }
+            printf("%s", $checkList[$length-1]);
+            if (in_array('その他', $checkList)) {
+              printf("(%s)", $_POST['other_descript']);
+            }
+          } else {
+            outErrorMessage($hobbyErrors);
           }
         ?>
       </p>

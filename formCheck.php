@@ -24,6 +24,17 @@
           }
         }
       ?>
+      <?php
+        foreach ($_POS as $value) {
+          if (is_array($value)) {
+            foreach ($value as $elm) {
+              $elm = trim($elm);
+            }
+          } else {
+            $value = trim($value);
+          }
+        }
+      ?>
       <p>
         名前：
         <?php
@@ -109,7 +120,8 @@
         ?>
       </p>
       
-      <p>趣味:
+      <p>
+        趣味:
         <?php
           $ERROR_MESSAGE_NO_OTHER = "その他の詳細を入力してください。";
           $hobbyErrors = array();
@@ -136,7 +148,8 @@
         ?>
       </p>
       
-      <p>ご意見:
+      <p>
+        ご意見:
         <?php
           printf("%s", $_POST['opinion']);
         ?>

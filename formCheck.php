@@ -15,7 +15,7 @@
   </header>
 
   <section>
-    <form>
+    <form/>
       <?php
         //エラーメッセージ配列を横一列で出力
         function outErrorMessage($errorMessages) {
@@ -146,23 +146,25 @@
           $hobbyErrors = array();
 
           //チェックしたボックス一覧を取得・表示
-          $checkList = $_POST['hobby'];
-          $length    = count($checkList);
-          if (in_array('その他', $checkList) && empty($_POST['other_descript'])) {
-            array_push($hobbyErrors, $ERROR_MESSAGE_NO_OTHER);
-          }
+          if (isSet($_POST['hobby'])) {
+            $checkList = $_POST['hobby'];
+            $length    = count($checkList);
+            if (in_array('その他', $checkList) && empty($_POST['other_descript'])) {
+              array_push($hobbyErrors, $ERROR_MESSAGE_NO_OTHER);
+            }
 
-          if (empty($hobbyErrors)) {
-            //表示
-            for ($i = 0; $i < $length-1; $i++ ) {
-              printf("%s,", $checkList[$i]);
+            if (empty($hobbyErrors)) {
+              //表示
+              for ($i = 0; $i < $length-1; $i++ ) {
+                printf("%s,", $checkList[$i]);
+              }
+              printf("%s", $checkList[$length-1]);
+              if (in_array('その他', $checkList)) {
+                printf("(%s)", $_POST['other_descript']);
+              }
+            } else {
+              outErrorMessage($hobbyErrors);
             }
-            printf("%s", $checkList[$length-1]);
-            if (in_array('その他', $checkList)) {
-              printf("(%s)", $_POST['other_descript']);
-            }
-          } else {
-            outErrorMessage($hobbyErrors);
           }
         ?>
       </p>
@@ -173,9 +175,29 @@
           printf("%s", $_POST['opinion']);
         ?>
       </p>
-      
-      <input type="submit" value="戻る" formaction="form.php">
       <input type="submit" value="送信" formaction="finish.php">
+    </form>  
+    
+    
+    <form action="form.php" method="post">
+      <input type='hidden' name='name_first'     value="<?php printf('%s', $_POST['name_first']);    ?>">
+      <input type='hidden' name='name_last'      value="<?php printf('%s', $_POST['name_last']);     ?>">
+      <input type='hidden' name='sex'            value="<?php printf('%s', $_POST['sex']);           ?>">
+      <input type='hidden' name='post_first'     value="<?php printf('%s', $_POST['post_first']);    ?>">
+      <input type='hidden' name='post_last'      value="<?php printf('%s', $_POST['post_last']);     ?>">
+      <input type='hidden' name='prefecture'     value="<?php printf('%s', $_POST['prefecture']);    ?>">
+      <input type='hidden' name='mail_address'   value="<?php printf('%s', $_POST['mail_address']);  ?>">
+      <?php
+        if(empty($checkList) == false) {
+          for ($i = 0; $i < $length; $i++) {
+            printf("<input type='hidden' name='hobby[]' value='%s'>", $checkList[$i]);
+          }
+        }
+      ?>
+      <input type='hidden' name='other_descript' value="<?php printf('%s', $_POST['other_descript']);?>">
+      <input type='hidden' name='opinion'        value="<?php printf('%s', $_POST['opinion']);       ?>">
+       
+      <input type='submit' value='戻る'>
     </form>
   </section>
 

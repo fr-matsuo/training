@@ -53,11 +53,16 @@ class Error_Info
         return false;
     }
     public static function checkIsIllegal(&$errorArray, $data, $name) {          //文法チェック
-        if ($name == 'mail_address' && isMailAddress($data) == false) {
-            array_push($errorArray, new Error_Info($name, 'illegal', ''));
-            return true;
+        switch ($name) {
+        case 'mail_address' ://メールアドレス
+            if (preg_match('/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@[a-zA-Z0-9_-]+([a-zA-Z0-9\._-]+)+$/', $data) == false) {
+                array_push($errorArray, new Error_Info($name, 'illegal', ''));
+                return true;
+            }
+            return false;
+        
+        default : return false;
         }
-        return false;
     }
     //エラーメッセージ配列をすべて出力
     public static function outErrorMessage($errorMessages) {
@@ -82,9 +87,10 @@ class Error_Info
     }
 }
 
+//_POSTから前後の空白を除いたもの
 $TRIMED_POST_DATA = getTrimedPOST();
 
-//_POSTから前後の空白を除いたものを取得
+//_TRIMED_POST_DATAを取得
 function getTrimedPOST() {
     $trimedArray = array();
 
@@ -99,17 +105,6 @@ function getTrimedPOST() {
     }
 
     return $trimedArray;
-}
-
-    
-//メールアドレスの書式チェック
-function isMailAddress($address) {
-    if (substr_count($address, '@') != 1) return false;
-    if (substr_count($address, ' ') != 0) return false;
-    if (strstr($address, '@')       == '@') return false;
-    if (strstr($address, '@', true) == '')  return false;
-        
-    return true;
 }
 
 ?>

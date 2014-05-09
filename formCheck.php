@@ -1,9 +1,9 @@
 <?php
 //エラーメッセージの内容や対象を保持・出力するクラス
-class ErrorInfo 
+class Error_Info
 {
     //エラー項目の名前
-    private static $NAME = array(
+    private static $_NAME = array(
         'name_first'     => '姓',
         'name_last'      => '名',
         'sex'            => '性別',
@@ -14,7 +14,7 @@ class ErrorInfo
     );
     
     //エラーの内容
-    private static $KIND = array(
+    private static $_KIND = array(
         'noText'   => '入力',
         'noChoise' => '選択',
         'overText' => '字以内で入力',
@@ -25,14 +25,14 @@ class ErrorInfo
     
     public static function checkIsNoText(&$errorArray, $data, $name) {           //必須入力チェック
         if (empty($data)) {
-            array_push($errorArray, new ErrorInfo($name, 'noText', ''));
+            array_push($errorArray, new Error_Info($name, 'noText', ''));
             return true;
         }
         return false;
     }
     public static function checkIsEmptyValue(&$errorArray, $data, $name, $emptyValue){//必須入力チェック(空を表す文字列と一致しないか)
         if ($data == $emptyValue) {
-            array_push($errorArray, new ErrorInfo($name, 'noText', ''));
+            array_push($errorArray, new Error_Info($name, 'noText', ''));
             return true;
         }
         return false;
@@ -40,39 +40,45 @@ class ErrorInfo
    
     public static function checkIsNoChoise(&$errorArray, $data, $name) {         //必須選択チェック
         if (empty($data)) {
-            array_push($errorArray, new ErrorInfo($name, 'noChoise', ''));
+            array_push($errorArray, new Error_Info($name, 'noChoise', ''));
             return true;
         }
         return false;
     }
     public static function checkIsOverText(&$errorArray, $data, $name, $value) { //字数チェック
         if (mb_strlen($data) > $value) {
-            array_push($errorArray, new ErrorInfo($name, 'overText', $value));
+            array_push($errorArray, new Error_Info($name, 'overText', $value));
             return true;
         }
         return false;
     }
     public static function checkIsIllegal(&$errorArray, $data, $name) {          //文法チェック
         if ($name == 'mail_address' && isMailAddress($data) == false) {
-            array_push($errorArray, new ErrorInfo($name, 'illegal', ''));
+            array_push($errorArray, new Error_Info($name, 'illegal', ''));
             return true;
         }
         return false;
     }
+    //エラーメッセージ配列をすべて出力
+    public static function outErrorMessage($errorMessages) {
+        foreach($errorMessages as $msg) {
+            $msg->_show();
+        }
+    }
 
-    private $name;  //エラー項目
-    private $kind;  //エラー内容
-    private $value; //'50'字以内などの値
+    private $_name;  //エラー項目
+    private $_kind;  //エラー内容
+    private $_value; //'50'字以内などの値
 
     private function __construct($errorName, $errorKind, $errorValue) {
-        $this->name  = ErrorInfo::$NAME[$errorName];
-        $this->kind  = ErrorInfo::$KIND[$errorKind];
-        $this->value = $errorValue;
+        $this->_name  = Error_Info::$_NAME[$errorName];
+        $this->_kind  = Error_Info::$_KIND[$errorKind];
+        $this->_value = $errorValue;
     }
     //エラー内容を表示
-    public function show() {
-        $valueText = (empty($this->value)) ? (string)$this->value : '';
-        printf('%sを%s%sしてください。', $this->name, $valueText, $this->kind);
+    private function _show() {
+        $valueText = (empty($this->_value)) ? (string)$this->_value : '';
+        printf('%sを%s%sしてください。', $this->_name, $valueText, $this->_kind);
     }
 }
 
@@ -95,12 +101,6 @@ function getTrimedPOST() {
     return $trimedArray;
 }
 
-//エラーメッセージ配列をすべて出力
-function outErrorMessage($errorMessages) {
-    foreach($errorMessages as $msg) {
-        $msg->show();
-    }
-}
     
 //メールアドレスの書式チェック
 function isMailAddress($address) {
@@ -135,16 +135,16 @@ function isMailAddress($address) {
         <?php
         $nameErrors = array();
         
-        ErrorInfo::checkIsNoText($nameErrors, $TRIMED_POST_DATA['name_first'], 'name_first');
-        ErrorInfo::checkIsNoText($nameErrors, $TRIMED_POST_DATA['name_last' ], 'name_first');
-        ErrorInfo::checkIsOverText($nameErrors, $TRIMED_POST_DATA['name_first'], 'name_first', 50);
-        ErrorInfo::checkIsOverText($nameErorrs, $TRIMED_POST_DATA['name_last'] , 'name_last',  50);
+        Error_Info::checkIsNoText($nameErrors, $TRIMED_POST_DATA['name_first'], 'name_first');
+        Error_Info::checkIsNoText($nameErrors, $TRIMED_POST_DATA['name_last' ], 'name_first');
+        Error_Info::checkIsOverText($nameErrors, $TRIMED_POST_DATA['name_first'], 'name_first', 50);
+        Error_Info::checkIsOverText($nameErorrs, $TRIMED_POST_DATA['name_last'] , 'name_last',  50);
         
         //表示
         if (empty($nameErrors)) {
             printf("%s %s", $TRIMED_POST_DATA['name_first'] ,$TRIMED_POST_DATA['name_last']);
         } else {
-            outErrorMessage($nameErrors);
+            Error_Info::outErrorMessage($nameErrors);
         }
         ?>
       </p>
@@ -153,13 +153,13 @@ function isMailAddress($address) {
         <?php
         $sexErrors = array();
 
-        ErrorInfo::checkIsNoChoise($sexErrors, $TRIMED_POST_DATA['sex'], 'sex');
+        Error_Info::checkIsNoChoise($sexErrors, $TRIMED_POST_DATA['sex'], 'sex');
 
         //表示 
         if (empty($sexErrors)) {
             print $TRIMED_POST_DATA['sex'];
         } else {
-            outErrorMessage($sexErrors);
+            Error_Info::outErrorMessage($sexErrors);
         }
         ?>
       </p>
@@ -170,13 +170,13 @@ function isMailAddress($address) {
         $postErrors = array();
         
         //前半入力済みの場合のみ後半を調べて、エラーの重複を避ける
-        $isNoFirstNumber = ErrorInfo::checkIsNoText($postErrors, $TRIMED_POST_DATA['post_first'], 'post');
-        if($isNoFirstNumber == false) ErrorInfo::checkIsNoText($postErrors, $TRIMED_POST_DATA['post_last'], 'post');
+        $isNoFirstNumber = Error_Info::checkIsNoText($postErrors, $TRIMED_POST_DATA['post_first'], 'post');
+        if($isNoFirstNumber == false) Error_Info::checkIsNoText($postErrors, $TRIMED_POST_DATA['post_last'], 'post');
 
         if (empty($postErrors)) {
             printf("%s-%s", $TRIMED_POST_DATA['post_first'], $TRIMED_POST_DATA['post_last']);
         } else {
-            outErrorMessage($postErrors);
+            Error_Info::outErrorMessage($postErrors);
         }
         ?>
       </p>
@@ -186,12 +186,12 @@ function isMailAddress($address) {
         <?php
         $prefectureErrors = array();
         
-        ErrorInfo::checkIsEmptyValue($prefectureErrors, $TRIMED_POST_DATA['prefecture'], 'prefecture', '--');
+        Error_Info::checkIsEmptyValue($prefectureErrors, $TRIMED_POST_DATA['prefecture'], 'prefecture', '--');
 
         if (empty($prefectureErrors)) {
             print $TRIMED_POST_DATA['prefecture'];
         } else {
-            outErrorMessage($prefectureErrors);
+            Error_Info::outErrorMessage($prefectureErrors);
         }
         ?>
       </p>
@@ -202,13 +202,13 @@ function isMailAddress($address) {
         $mailErrors = array();
 
         //入力されている場合のみ書式を調べる
-        $noMailAddress = ErrorInfo::checkIsNoText($mailErrors, $TRIMED_POST_DATA['mail_address'], 'mail_address');
-        if ($noMailAddress == false) ErrorInfo::checkIsIllegal($mailErrors, $TRIMED_POST_DATA['mail_address'], 'mail_address');
+        $noMailAddress = Error_Info::checkIsNoText($mailErrors, $TRIMED_POST_DATA['mail_address'], 'mail_address');
+        if ($noMailAddress == false) Error_Info::checkIsIllegal($mailErrors, $TRIMED_POST_DATA['mail_address'], 'mail_address');
 
         if (empty($mailErrors)) {
             print $TRIMED_POST_DATA['mail_address'];
         } else {
-            outErrorMessage($mailErrors);
+            Error_Info::outErrorMessage($mailErrors);
         }
         ?>
       </p>
@@ -225,7 +225,7 @@ function isMailAddress($address) {
 
             //その他があれば、詳細の入力をチェック
             if (in_array('その他', $checkList)) {
-                ErrorInfo::checkIsNoText($hobbyErrors, $TRIMED_POST_DATA['other_descript'], 'other_descript');
+                Error_Info::checkIsNoText($hobbyErrors, $TRIMED_POST_DATA['other_descript'], 'other_descript');
             }
 
             if (empty($hobbyErrors)) {
@@ -239,7 +239,7 @@ function isMailAddress($address) {
                     printf("(%s)", $TRIMED_POST_DATA['other_descript']);
                 }
             } else {
-                outErrorMessage($hobbyErrors);
+                Error_Info::outErrorMessage($hobbyErrors);
             }
         }
         ?>

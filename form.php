@@ -34,9 +34,9 @@
         <br>
   
         <label>郵便番号:</label>
-        <input type="text" name="post_first" id="post_first" value="<?php print $_POST['post_first']; ?>">
+        <input type="text" name="post_first" id="post_first" maxlength="3" value="<?php print $_POST['post_first']; ?>">
         -
-        <input type="text" name="post_last" id="post_last" value="<?php print $_POST['post_last']; ?>">
+        <input type="text" name="post_last" id="post_last" maxlength="4" value="<?php print $_POST['post_last']; ?>">
         <br>
         
         <label>都道府県:</label>

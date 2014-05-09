@@ -76,6 +76,8 @@ class ErrorInfo
     }
 }
 
+$TRIMED_POST_DATA = getTrimedPOST();
+
 //_POSTから前後の空白を除いたものを取得
 function getTrimedPOST() {
     $trimedArray = array();
@@ -133,14 +135,14 @@ function isMailAddress($address) {
         <?php
         $nameErrors = array();
         
-        ErrorInfo::checkIsNoText($nameErrors, $_POST['name_first'], 'name_first');
-        ErrorInfo::checkIsNoText($nameErrors, $_POST['name_last' ], 'name_first');
-        ErrorInfo::checkIsOverText($nameErrors, $_POST['name_first'], 'name_first', 50);
-        ErrorInfo::checkIsOverText($nameErorrs, $_POST['name_last'] , 'name_last',  50);
+        ErrorInfo::checkIsNoText($nameErrors, $TRIMED_POST_DATA['name_first'], 'name_first');
+        ErrorInfo::checkIsNoText($nameErrors, $TRIMED_POST_DATA['name_last' ], 'name_first');
+        ErrorInfo::checkIsOverText($nameErrors, $TRIMED_POST_DATA['name_first'], 'name_first', 50);
+        ErrorInfo::checkIsOverText($nameErorrs, $TRIMED_POST_DATA['name_last'] , 'name_last',  50);
         
         //表示
         if (empty($nameErrors)) {
-            printf("%s %s", $_POST['name_first'] ,$_POST['name_last']);
+            printf("%s %s", $TRIMED_POST_DATA['name_first'] ,$TRIMED_POST_DATA['name_last']);
         } else {
             outErrorMessage($nameErrors);
         }
@@ -151,11 +153,11 @@ function isMailAddress($address) {
         <?php
         $sexErrors = array();
 
-        ErrorInfo::checkIsNoChoise($sexErrors, $_POST['sex'], 'sex');
+        ErrorInfo::checkIsNoChoise($sexErrors, $TRIMED_POST_DATA['sex'], 'sex');
 
         //表示 
         if (empty($sexErrors)) {
-            print $_POST['sex'];
+            print $TRIMED_POST_DATA['sex'];
         } else {
             outErrorMessage($sexErrors);
         }
@@ -168,11 +170,11 @@ function isMailAddress($address) {
         $postErrors = array();
         
         //前半入力済みの場合のみ後半を調べて、エラーの重複を避ける
-        $isNoFirstNumber = ErrorInfo::checkIsNoText($postErrors, $_POST['post_first'], 'post');
-        if($isNoFirstNumber == false) ErrorInfo::checkIsNoText($postErrors, $_POST['post_last'], 'post');
+        $isNoFirstNumber = ErrorInfo::checkIsNoText($postErrors, $TRIMED_POST_DATA['post_first'], 'post');
+        if($isNoFirstNumber == false) ErrorInfo::checkIsNoText($postErrors, $TRIMED_POST_DATA['post_last'], 'post');
 
         if (empty($postErrors)) {
-            printf("%s-%s", $_POST['post_first'], $_POST['post_last']);
+            printf("%s-%s", $TRIMED_POST_DATA['post_first'], $TRIMED_POST_DATA['post_last']);
         } else {
             outErrorMessage($postErrors);
         }
@@ -184,10 +186,10 @@ function isMailAddress($address) {
         <?php
         $prefectureErrors = array();
         
-        ErrorInfo::checkIsEmptyValue($prefectureErrors, $_POST['prefecture'], 'prefecture', '--');
+        ErrorInfo::checkIsEmptyValue($prefectureErrors, $TRIMED_POST_DATA['prefecture'], 'prefecture', '--');
 
         if (empty($prefectureErrors)) {
-            print $_POST['prefecture'];
+            print $TRIMED_POST_DATA['prefecture'];
         } else {
             outErrorMessage($prefectureErrors);
         }
@@ -200,11 +202,11 @@ function isMailAddress($address) {
         $mailErrors = array();
 
         //入力されている場合のみ書式を調べる
-        $noMailAddress = ErrorInfo::checkIsNoText($mailErrors, $_POST['mail_address'], 'mail_address');
-        if ($noMailAddress == false) ErrorInfo::checkIsIllegal($mailErrors, $_POST['mail_address'], 'mail_address');
+        $noMailAddress = ErrorInfo::checkIsNoText($mailErrors, $TRIMED_POST_DATA['mail_address'], 'mail_address');
+        if ($noMailAddress == false) ErrorInfo::checkIsIllegal($mailErrors, $TRIMED_POST_DATA['mail_address'], 'mail_address');
 
         if (empty($mailErrors)) {
-            print $_POST['mail_address'];
+            print $TRIMED_POST_DATA['mail_address'];
         } else {
             outErrorMessage($mailErrors);
         }
@@ -217,13 +219,13 @@ function isMailAddress($address) {
         $hobbyErrors = array();
 
         //チェックしたボックス一覧を取得・表示
-        if (isSet($_POST['hobby'])) {
-            $checkList = $_POST['hobby'];
+        if (isSet($TRIMED_POST_DATA['hobby'])) {
+            $checkList = $TRIMED_POST_DATA['hobby'];
             $length    = count($checkList);
 
             //その他があれば、詳細の入力をチェック
             if (in_array('その他', $checkList)) {
-                ErrorInfo::checkIsNoText($hobbyErrors, $_POST['other_descript'], 'other_descript');
+                ErrorInfo::checkIsNoText($hobbyErrors, $TRIMED_POST_DATA['other_descript'], 'other_descript');
             }
 
             if (empty($hobbyErrors)) {
@@ -234,7 +236,7 @@ function isMailAddress($address) {
                 printf("%s", $checkList[$length-1]);
                 //その他があれば詳細を表示
                 if (in_array('その他', $checkList)) {
-                    printf("(%s)", $_POST['other_descript']);
+                    printf("(%s)", $TRIMED_POST_DATA['other_descript']);
                 }
             } else {
                 outErrorMessage($hobbyErrors);
@@ -245,18 +247,18 @@ function isMailAddress($address) {
       
       <p>
         ご意見:
-        <?php print $_POST['opinion']; ?>
+        <?php print $TRIMED_POST_DATA['opinion']; ?>
       </p>
       <input type="submit" value="送信" formaction="finish.php">
     </form>  
     <form action="form.php" method="post">
-      <input type='hidden' name='name_first'     value="<?php printf('%s', $_POST['name_first']);   ?>">
-      <input type='hidden' name='name_last'      value="<?php printf('%s', $_POST['name_last']);    ?>">
-      <input type='hidden' name='sex'            value="<?php printf('%s', $_POST['sex']);          ?>">
-      <input type='hidden' name='post_first'     value="<?php printf('%s', $_POST['post_first']);   ?>">
-      <input type='hidden' name='post_last'      value="<?php printf('%s', $_POST['post_last']);    ?>">
-      <input type='hidden' name='prefecture'     value="<?php printf('%s', $_POST['prefecture']);   ?>">
-      <input type='hidden' name='mail_address'   value="<?php printf('%s', $_POST['mail_address']); ?>">
+      <input type='hidden' name='name_first'     value="<?php printf('%s', $TRIMED_POST_DATA['name_first']);   ?>">
+      <input type='hidden' name='name_last'      value="<?php printf('%s', $TRIMED_POST_DATA['name_last']);    ?>">
+      <input type='hidden' name='sex'            value="<?php printf('%s', $TRIMED_POST_DATA['sex']);          ?>">
+      <input type='hidden' name='post_first'     value="<?php printf('%s', $TRIMED_POST_DATA['post_first']);   ?>">
+      <input type='hidden' name='post_last'      value="<?php printf('%s', $TRIMED_POST_DATA['post_last']);    ?>">
+      <input type='hidden' name='prefecture'     value="<?php printf('%s', $TRIMED_POST_DATA['prefecture']);   ?>">
+      <input type='hidden' name='mail_address'   value="<?php printf('%s', $TRIMED_POST_DATA['mail_address']); ?>">
       <?php
       if(empty($checkList) == false) {
           for ($i = 0; $i < $length; $i++) {
@@ -264,8 +266,8 @@ function isMailAddress($address) {
           }
       }
       ?>
-      <input type='hidden' name='other_descript' value="<?php printf('%s', $_POST['other_descript']); ?>">
-      <input type='hidden' name='opinion'        value="<?php printf('%s', $_POST['opinion']);        ?>">
+      <input type='hidden' name='other_descript' value="<?php printf('%s', $TRIMED_POST_DATA['other_descript']); ?>">
+      <input type='hidden' name='opinion'        value="<?php printf('%s', $TRIMED_POST_DATA['opinion']);        ?>">
        
       <input type='submit' value='戻る'>
     </form>

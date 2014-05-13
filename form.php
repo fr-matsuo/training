@@ -144,7 +144,6 @@ class Error_Checker
         $this->_showName       = $showName;
         $this->_checkFuncArray = $checkFuncArray;
         $this->_errorArray = array();
-        printf ('%s：%d', $showName,count($checkFuncArray));
     }
 
     //この項目についてのエラーをチェックし、配列として返す。
@@ -285,17 +284,17 @@ function checkErrors() {
 //次のページに行けるならジャンプする関数。入力をform.phpに戻し、エラーがないならformCheck.phpへジャンプ
 //bodyの宣言で呼び出し
 function checkJump() {
-    //if (empty($_POST)) {return;}
+    if (empty($_POST)) {return;}
     
     checkErrors();
     if(Error_Message::hasError() == false ) {
-        //print "onLoad='document.checkForm.submit();'";
-    }
+        print "onLoad='document.checkForm.submit();'";
+    }      
 }
 //エラーがあればエラー一覧、なけければ送信用ダミーボタンを表示
 //初回は処理を飛ばしたいので関数化
 function showError(){
-    //if(empty($_POST)) return;
+    if(empty($_POST)) return;
 
     if(Error_Message::hasError()) {
         $errorTexts = Error_Message::getAllErrorString();
@@ -315,11 +314,19 @@ function showError(){
   <meta http-equiv="Content-Style-Type" content="text/css">
   <link rel="stylesheet" type="text/css" href="common.css">
   <link rel="stylesheet" type="text/css" href="form.css">
-  <title>フォーム画面</title>
-    
+  <title>フォーム画面</title>  
+
+  <script type="text/javascript">
+  <!--
+  function checkOther(){
+      var otherHobby = document.getElementById('other').value;
+      document.getElementById('other').checked = (otherHobby != '');
+  }
+  -->
+  </script>
 </head>
 
-<body <?php checkJump(); ?>>
+<body <?php checkJump(); ?> >
 <header>
 <h1>フォーム>入力</h1>
 </header>
@@ -388,13 +395,13 @@ function showError(){
                       $key, $elm, $checked, $key, $elm);
     }
     ?>
-    <input type="text" name="other_descript" id="other_descript" value="<?php print $_POST['other_descript']; ?>">
+    <input type="text" name="other_descript" id="other_descript" value="<?php print $_POST['other_descript']; ?>" onChange="checkOther();">
     <br>
     
     <label>ご意見</label>
     <input type="text" id="opinion" name="opinion" value="<?php print $_POST['opinion']; ?>">
 
-    <input type="submit" value="確認">
+    <input type="submit" value="確認" onClick=>
     </fieldset>
   </form>
   <form method="post" name="checkForm" action="formCheck.php">
@@ -408,10 +415,10 @@ function showError(){
     <?php
         if(empty($checkList) == false) {
             foreach ($checkList as $checked) {
-                 printf("<input type='hidden' name='hobby[]' value='%s'>", $checked);
-            }
+                printf("<input type='hidden' name='hobby[]' value='%s'>", $checked);
+            }            
         }
-    ?>
+    ?> 
     <input type='hidden' name='other_descript' value="<?php printf('%s', $_POST['other_descript']); ?>">
     <input type='hidden' name='opinion'        value="<?php printf('%s', $_POST['opinion']);        ?>">
 

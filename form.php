@@ -99,6 +99,49 @@ class Check_Function_Data
             return false;
         }
     }
+} 
+//名前や性別など、一つお項目についてのエラーチェックを行う
+//checkErrors()から呼ばれるgetCheckResult()によりエラー一覧の配列を取得する
+class Error_Checker
+{
+    private $_showName;            //項目名　名前　性別　など
+    private $_errorArray;          //エラー一覧
+    private $_checkFuncArray;      //チェック一回分の情報　を複数持つ配列
+
+    public function __construct($showName, $checkFuncArray) {
+        $this->_showName       = $showName;
+        $this->_checkFuncArray = $checkFuncArray;
+        $this->_errorArray = array();
+        printf ('%s：%d', $showName,count($checkFuncArray));
+    }
+
+    //この項目についてのエラーをチェックし、配列として返す。
+    public function getCheckResult() {
+        $checkNum = 0;
+        $functions = $this->_checkFuncArray;
+
+        for($turn = 0; $turn < 5; $turn++) {               //順番にチェック
+
+            $endFlag = false;
+            foreach ($functions as $funcData) {
+                if($funcData->isTurn($turn) == false) continue;
+
+                $isError = $funcData->check($this->_errorArray, $turn);
+                unset($funcData);
+
+                if ($isError) {  //チェックを実行してエラーがあるか
+                    $endFlag = true;
+                } else {
+                    if(empty($functions)) {
+                        $endFlag = true;
+                        break;
+                    }
+                }
+            }
+            if($endFlag) break;
+        }
+        return $this->_errorArray;
+    }
 }
 ?>
 <!DOCTYPE html>

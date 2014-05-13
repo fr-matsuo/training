@@ -10,7 +10,7 @@ class Error_Message
          'sex'            => '性別',
          'post_first'     => '郵便番号',
          'post_last'      => '郵便番号',
-         'prefecture'     => '都道府県',
+         'rprefecture'     => '都道府県',
          'mail_address'   => 'メールアドレス',
          'other_descript' => 'その他の詳細'
     );
@@ -143,6 +143,131 @@ class Error_Checker
         return $this->_errorArray;
     }
 }
+//文字列配列orその配列の要素をトリムしたものを返す
+function getTrimedTextArray($textArray) {
+    $trimedArray = array();
+
+    //連想配列は、array_mergeを使わないと正しく追加できないらしい?
+    foreach ($textArray as $key => $value) {
+        if (is_array($value)) {
+            $add = array();
+            foreach ($value as $arrayKey => $arrayValue) {
+                $elem = array($arrayKey => $arrayValue);
+                $addBuf = array($key => $elem);
+                $add = array_merge($add, $addBuf);
+            }
+            $trimedArray = array_merge($trimedArray, $add);
+        } else {
+            $add = array($key => $value);
+            $trimedArray = array_merge($trimedArray, $add);
+        }
+    }
+
+    return $trimedArray;
+}
+function checkErrors() {
+    $TRIMED_POST = getTrimedTextArray($_POST);
+    //if(empty($TRIMED_POST)) return null;
+
+    //エラーチェックの引数リスト作成
+    //引数の配列は、コンストラクタにnewで渡せなかったので別に記述
+
+    $nameCheckFunctions = array(
+            new Check_Function_Data('name_first', $TRIMED_POST['name_first'], '', 'checkIsNoText', 0),
+            new Check_Function_Data('name_last',  $TRIMED_POST['name_last'] , '', 'checkIsNoText', 0)
+    );
+    $nameChecker = new Error_Checker(
+        '名前',
+        $nameCheckFunctions
+    );
+
+    $sexCheckFunctions = array(
+        new Check_Function_Data('sex', $TRIMED_POST['sex'], '', 'checkIsNoChoise', 0)
+    );
+    $sexChecker = new Error_Checker(
+        '性別',
+        $sexCheckFunctions
+    );
+
+    $postCheckFunctions = array(
+        new Check_Function_Data('post_first', $TRIMED_POST['post_first'], '', 'checkIsNoText', 0),
+        new Check_Function_Data('post_last',  $TRIMED_POST['post_last'],  '', 'checkIsNoText', 1)
+    );
+    $postChecker = new Error_Checker(
+        '郵便番号',
+        $postCheckFunctions
+    );
+
+    $prefectureCheckFunctions = array(
+        new Check_Function_Data('prefecture', $TRIMED_POST['prefecture'], '--', 'checkIsEmptyValue', 0)
+    );
+    $prefectureChecker = new Error_Checker(
+        '都道府県',
+        $prefectureCheckFunctions
+    );
+
+    $mailAddressCheckFunctions = array(
+        new Check_Function_Data('mail_address', $TRIMED_POST['mail_address'], '', 'checkIsNoText', 0),
+        new Check_Function_Data('mail_address', $TRIMED_POST['mail_address'], '', 'checkIsIllegal', 1)
+    );
+    $mailAddressChecker = new Error_Checker(
+        'メールアドレス',
+        $mailAddressCheckFunctions
+    );
+
+    $hobbyCheckFunctions = array();
+    if (isset($TRIMED_POST_DATA['hobby']['other'])) {
+        array_push(
+            $hobbyCheckFunctions,
+            new Check_Function_Data('hobby', $TRIMED_POST['other_descript'], '', 'checkIsNoText', 0)
+        );
+    }
+    $hobbyChecker = new Error_Checker(
+        '趣味',
+        $hobbyCheckFunctions
+    );
+
+    //foreachで回すために上記を格納
+    $checkers = array(
+        $nameChecker,
+        $sexChecker,
+        $postChecker,
+        $prefectureChecker,
+        $mailAddressChecker,
+        $hobbyChecker
+    );
+
+    $errors = array();
+        foreach ($checkers as $checker){
+            array_push($errors, $checker->getCheckResult());
+        }
+    
+        return $errors;
+}
+   
+//次のページに行けるならジャンプする関数。入力をform.phpに戻し、エラーがないならformCheck.phpへジャンプ
+//bodyの宣言で呼び出し
+function checkJump() {
+    if (empty($_POST)) {return;}
+        checkErrors();
+    if(Error_Message::hasError() == false ) {
+        //print "onLoad='document.checkForm.submit();'";
+    }
+}
+//エラーがあればエラー一覧、なけければ送信用ダミーボタンを表示
+//初回は処理を飛ばしたいので関数化
+function showError(){
+    //if(empty($_POST)) return;
+
+    if(Error_Message::hasError()) {
+        $errorTexts = Error_Message::getAllErrorString();
+        foreach ($errorTexts as $error){
+            printf("%s<br>", $error);
+        }
+    } else {
+        print "<input type='submit' value='dummy'>";
+    }
+}
 ?>
 <!DOCTYPE html>
 
@@ -167,8 +292,8 @@ class Error_Checker
         
         <label>名前:</label>
         <input type="text" name="name_first" id="name_first" value="<?php print $_POST['name_first']; ?>">
-        <input type="text" name="name_last" id="name_last" value="<?php print $_POST['name_last']; ?>">
-        <br> 
+        <input type="text" name="name_last" id="name_last" value="<?print $_POST['name_last']; ?>">
+        <br>  
         
         <label>性別:</label>
           <?php

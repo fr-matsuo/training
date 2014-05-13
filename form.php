@@ -252,10 +252,10 @@ function checkErrors() {
     );
 
     $hobbyCheckFunctions = array();
-    if (isset($TRIMED_POST_DATA['hobby']['other'])) {
+    if (in_array('その他',$TRIMED_POST['hobby'])) {
         array_push(
             $hobbyCheckFunctions,
-            new Check_Function_Data('hobby', $TRIMED_POST['other_descript'], '', 'checkIsNoText', 0)
+            new Check_Function_Data('other_descript', $TRIMED_POST['other_descript'], '', 'checkIsNoText', 0)
         );
     }
     $hobbyChecker = new Error_Checker(

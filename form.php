@@ -1,4 +1,7 @@
 <?php
+//エラーメッセージデータを表し、エラーの有無や配列の出力を行う。
+//html内では、hasError()でのエラーの有無の確認のみ直接呼び出す
+class Error_Message
 {
     //エラー項目の名前
     private static $_NAME = array(
@@ -43,14 +46,61 @@
         $this->_addErrorString();
     }
     //このエラーの表示を一覧に追加
-    $valueText = (empty($this->_value)) ? (string)$this->_value : '';
-         $text      = sprintf('%sを%s%sしてください。', $this->_name, $valueText, $this->_kind);
-         array_push(Error_Message::$_allErrorString, $text);
+    private function _addErrorString() {
+        $valueText = (empty($this->_value)) ? (string)$this->_value : '';
+        $text      = sprintf('%sを%s%sしてください。', $this->_name, $valueText, $this->_kind);
+        array_push(Error_Message::$_allErrorString, $text);
     }
 }
+//チェック関数一回分の情報を保持・実行し、ErrorInfoを生成する。
+//html内では直接呼ばない
+class Check_Function_Data
+{
+    //チェック関数に配列を渡すと、エラーの場合のみError_Infoのインスタンスを生成、渡された配列に追加
+    //引数は　格納されるエラーの配列, 入力値, 要素のname, 閾値などの値
+    public static function checkIsNoText(&$errorArray, $data, $name, $dummy) {           //必須入力チェック
+        if (empty($data)) {
+            array_push($errorArray, new Error_Message($name, 'noText', ''));
+            return true;
+        }
+        return false;
+    }
+    public static function checkIsEmptyValue(&$errorArray, $data, $name, $emptyValue){//必須入力チェック(空を表す文字列と一致しないか)
+        if ($data == $emptyValue) {
+            array_push($errorArray, new Error_Message($name, 'noText', ''));
+            return true;
+        }
+        return false;
+    }
+    public static function checkIsNoChoise(&$errorArray, $data, $name, $dummy) {      //必須選択チェック
+       if (empty($data)) {
+           array_push($errorArray, new Error_Message($name, 'noChoise', ''));
+           return true;
+       }
+       return false;
+    }
+    public static function checkIsOverText(&$errorArray, $data, $name, $value) {      //字数チェック
+        if (mb_strlen($data) > $value) {
+            array_push($errorArray, new Error_Message($name, 'overText', $value));
+            return true;
+        }
+        return false;
+    }
+    public static function checkIsIllegal(&$errorArray, $data, $name, $dummy) {       //文法チェック
+        switch ($name) {
+        case 'mail_address' ://メールアドレス
+            if (preg_match('/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@[a-zA-Z0-9_-]+([a-zA-Z0-9\._-]+)+$/', $data) == false) {
+                array_push($errorArray, new Error_Message($name, 'illegal', ''));
+                return true;
+            }
+            return false;
 
+        default :
+            return false;
+        }
+    }
+}
 ?>
-
 <!DOCTYPE html>
 
 <html>

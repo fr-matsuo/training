@@ -265,6 +265,7 @@ function getTrimedPOST() {
       <input type='hidden' name='opinion'        value="<?php printf('%s', $TRIMED_POST_DATA['opinion']);        ?>">
        
       <input type='submit' value='戻る'>
+      <input type='hidden' name='return' value='return'>
     </form>
   </section>
 

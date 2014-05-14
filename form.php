@@ -28,12 +28,6 @@ class Error_Message
     //生成されたエラーのテキストをすべて格納
     private static $_allErrorString = array();
 
-    //一つでも生成されたら、エラーがあるのでtrue
-    public static function hasError(){ return Error_Message::$_hasError; }
-
-    //全エラーの文字列を取得
-    public static function getAllErrorString(){ return Error_Message::$_allErrorString; }
-
     private $_name;  //エラー項目
     private $_kind;  //エラー内容
     private $_value; //'50'字以内などの値
@@ -48,6 +42,12 @@ class Error_Message
         $this->_addErrorString();
     }
     
+    //一つでも生成されたら、エラーがあるのでtrue
+    public static function hasError(){ return Error_Message::$_hasError; }
+
+    //全エラーの文字列を取得
+    public static function getAllErrorString(){ return Error_Message::$_allErrorString; }
+
     //このエラーの表示を一覧に追加
     private function _addErrorString() {
         $valueText = (empty($this->_value)) ? (string)$this->_value : '';
@@ -60,6 +60,20 @@ class Error_Message
 //html内では直接呼ばない
 class Check_Function_Data
 {
+    private $_name;     //Error_InfoのNAMEに対応する項目名
+    private $_data;     //入力値
+    private $_value;    //閾値や空文字など
+    private $_function; //チェックする関数
+    private $_turn;     //チェックする順番,郵便番号の前後が無いなどのエラー重複排除用
+    
+    public function __construct($name, $data, $value, $function, $turn) {
+        $this->_name     = $name;
+        $this->_data     = $data;
+        $this->_value    = $value;
+        $this->_function = $function;
+        $this->_turn     = $turn;
+    }
+
     //チェック関数に配列を渡すと、エラーの場合のみError_Infoのインスタンスを生成、渡された配列に追加
     //引数は　格納されるエラーの配列, 入力値, 要素のname, 閾値などの値
     public static function checkIsNoText(&$errorArray, $data, $name, $dummy) {           //必須入力チェック
@@ -103,20 +117,6 @@ class Check_Function_Data
         default:
             return false;
         }
-    }
-
-    private $_name;     //Error_InfoのNAMEに対応する項目名
-    private $_data;     //入力値
-    private $_value;    //閾値や空文字など
-    private $_function; //チェックする関数
-    private $_turn;     //チェックする順番,郵便番号の前後が無いなどのエラー重複排除用
-    
-    public function __construct($name, $data, $value, $function, $turn) {
-        $this->_name     = $name;
-        $this->_data     = $data;
-        $this->_value    = $value;
-        $this->_function = $function;
-        $this->_turn     = $turn;
     }
 
     //ターンが一致するか

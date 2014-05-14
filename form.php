@@ -182,10 +182,29 @@ class Error_Checker
     }
 }
 
+//SQLの入力に対してエスケープしたものを返す
+function getEscapeSQLText($text) {
+    $SEARCH_CHARS = array(
+        '"' => '&quot;',
+        '&' => '&amp;',
+        '<' => '&lt;',
+        '>' => '&gt;',
+        '\'' => '&#39;'
+    );
+
+    $replaced=$text;
+    foreach($SEARCH_CHARS as $before => $after) {
+        $buf      = $replaced;
+        $replaced = str_replace($before, $after, $buf);
+    }
+    return $replaced;
+}
+
 //文字列を安全なものに変換したものを返す
 function getSecureText($text) {
-    $convertedForHtml = htmlspecialchars($text);
-    return $convertedForHtml;
+    $forHtml = htmlspecialchars($text);
+    $forSQL  = getEscapeSQLText($forHtml);
+    return $forSQL;
 }
 
 //文字配列orその配列の要素をトリムしたものを返す

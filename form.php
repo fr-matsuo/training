@@ -182,8 +182,37 @@ class Error_Checker
     }
 }
 
+//文字列を安全なものに変換したものを返す
+function getSecureText($text) {
+    $convertedForHtml = htmlspecialchars($text);
+    return $convertedForHtml;
+}
+
 //文字配列orその配列の要素をトリムしたものを返す
-function getTrimedTextArray($textArray) {
+function getTrimedText($text) {
+    $TRIM_CHARS=' 　';
+    return trim($text, $TRIM_CHARS);
+}
+
+//文字列をフォーマットしたものを返す
+function getFormatedText($text, $index) {
+    //これらの関数を上から再帰的に適用する
+    $FORMAT_FUNCTIONS = array(
+        'getTrimedText',
+        'getSecureText'
+    );
+
+    if($index == count($FORMAT_FUNCTIONS)) {
+        return $text;
+    } else {
+        $nextText = $FORMAT_FUNCTIONS[$index]($text, $index);
+        $index++;
+        return getFormatedText($nextText, $index);
+    }
+}
+
+//入力値をフォーマットしたものを返す
+function getFormatedTextArray($textArray) {
     $trimedArray = array();
     $trimChars=' 　';
 
@@ -192,13 +221,13 @@ function getTrimedTextArray($textArray) {
         if (is_array($value)) {
             $add = array();
             foreach ($value as $arrayKey => $arrayValue) {
-                $elem = array($arrayKey => trim($arrayValue, $trimChars));
+                $elem = array($arrayKey => getFormatedText($arrayValue, 0));
                 $addBuf = array($key => $elem);
                 $add = array_merge($add, $addBuf);
             }
             $trimedArray = array_merge($trimedArray, $add);
         } else {
-            $add = array($key => trim($value, $trimChars));
+            $add = array($key => getFormatedText($value, 0));
             $trimedArray = array_merge($trimedArray, $add);
         }
     }
@@ -208,8 +237,7 @@ function getTrimedTextArray($textArray) {
 
 //値のエラーをチェックし、エラー一覧を返す
 function checkErrors() {
-    $TRIMED_POST = getTrimedTextArray($_POST);
-    //if(empty($TRIMED_POST)) return null;
+    $TRIMED_POST = getFormatedTextArray($_POST);
 
     //エラーチェックの引数リスト作成
     //引数の配列は、コンストラクタにnewで渡せなかったので別に記述
@@ -291,7 +319,7 @@ function checkErrors() {
 //次のページに行けるならジャンプする関数。入力をform.phpに戻し、エラーがないならformCheck.phpへジャンプ
 //bodyの宣言で呼び出し
 function checkJump() {
-    if (empty($_POST) || isset($_POST['return'])) {return;}
+//    if (empty($_POST) || isset($_POST['return'])) {return;}
     
     checkErrors();
     if(Error_Message::hasError() == false ) {
@@ -301,7 +329,7 @@ function checkJump() {
 //エラーがあればエラー一覧、なけければ送信用ダミーボタンを表示
 //初回は処理を飛ばしたいので関数化
 function showError() {
-    if(empty($_POST) || isset($_POST['return'])) return;
+//    if(empty($_POST) || isset($_POST['return'])) return;
 
     if(Error_Message::hasError()) {
         $errorTexts = Error_Message::getAllErrorString();
@@ -412,26 +440,25 @@ function showError() {
     </fieldset>
   </form>
   <form method="post" name="checkForm" action="formCheck.php">
-    <input type='hidden' name='name_first'     value="<?php printf('%s', $_POST['name_first']);   ?>">
-    <input type='hidden' name='name_last'      value="<?php printf('%s', $_POST['name_last']);    ?>">
-    <input type='hidden' name='sex'            value="<?php printf('%s', $_POST['sex']);          ?>">
-    <input type='hidden' name='post_first'     value="<?php printf('%s', $_POST['post_first']);   ?>">
-    <input type='hidden' name='post_last'      value="<?php printf('%s', $_POST['post_last']);    ?>">
-    <input type='hidden' name='prefecture'     value="<?php printf('%s', $_POST['prefecture']);   ?>">
-    <input type='hidden' name='mail_address'   value="<?php printf('%s', $_POST['mail_address']); ?>">
-    <?php
-        if(empty($checkList) == false) {
-            foreach ($checkList as $checked) {
-                printf("<input type='hidden' name='hobby[]' value='%s'>", $checked);
-            }            
-        }
-    ?> 
-    <input type='hidden' name='other_descript' value="<?php printf('%s', $_POST['other_descript']); ?>">
-    <input type='hidden' name='opinion'        value="<?php printf('%s', $_POST['opinion']);        ?>">
+  <?php
+  $FORMATED_POST = getFormatedTextArray($_POST);
 
-    <?php
-        showError();
-    ?>
+  $NAMES = array(
+      'name_first', 'name_last', 'sex', 'post_first', 'post_last',
+      'prefecture','mail_address', 'other_descript', 'opinion'
+  );
+
+  foreach($NAMES as $name) {
+      printf("<input type='hidden' name='%s' value='%s'>", $name, $FORMATED_POST[$name]);
+  }
+
+  if(empty($checkList) == false) {
+      foreach ($checkList as $checked) {
+          printf("<input type='hidden' name='hobby[]' value='%s'>", $checked);
+      }
+  }
+  showError();
+  ?>
 
   <footer>
     <p>Copyright 2014</p>

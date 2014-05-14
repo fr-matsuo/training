@@ -29,15 +29,15 @@ class Error_Message
     private static $_allErrorString = array();
 
     //一つでも生成されたら、エラーがあるのでtrue
-    public static function hasError(){return Error_Message::$_hasError;}
+    public static function hasError(){ return Error_Message::$_hasError; }
 
     //全エラーの文字列を取得
-    public static function getAllErrorString(){return Error_Message::$_allErrorString;}
+    public static function getAllErrorString(){ return Error_Message::$_allErrorString; }
 
     private $_name;  //エラー項目
     private $_kind;  //エラー内容
     private $_value; //'50'字以内などの値
-    
+
     public function __construct($errorName, $errorKind, $errorValue) {
         $this->_name  = Error_Message::$_NAME[$errorName];
         $this->_kind  = Error_Message::$_KIND[$errorKind];
@@ -69,7 +69,7 @@ class Check_Function_Data
         }
         return false;
     }
-    public static function checkIsEmptyValue(&$errorArray, $data, $name, $emptyValue){//必須入力チェック(空を表す文字列と一致しないか)
+    public static function checkIsEmptyValue(&$errorArray, $data, $name, $emptyValue) {//必須入力チェック(空を表す文字列と一致しないか)
         if ($data == $emptyValue) {
             array_push($errorArray, new Error_Message($name, 'noText', ''));
             return true;
@@ -92,14 +92,15 @@ class Check_Function_Data
     }
     public static function checkIsIllegal(&$errorArray, $data, $name, $dummy) {       //文法チェック
         switch ($name) {
-        case 'mail_address' ://メールアドレス
-            if (preg_match('/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@[a-zA-Z0-9_-]+([a-zA-Z0-9\._-]+)+$/', $data) == false) {
+        case 'mail_address'://メールアドレス
+            $pattern = '/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@[a-zA-Z0-9_-]+([a-zA-Z0-9\._-]+)+$/';
+            if (preg_match($pattern, $data) == false) {
                 array_push($errorArray, new Error_Message($name, 'illegal', ''));
                 return true;
             }
             return false;
 
-        default : 
+        default:
             return false;
         }
     }
@@ -119,7 +120,7 @@ class Check_Function_Data
     }
 
     //ターンが一致するか
-    public function isTurn($turn){
+    public function isTurn($turn) {
         return $turn == $this->_turn;
     }
 
@@ -139,11 +140,22 @@ class Error_Checker
     private $_showName;            //項目名　名前　性別　など
     private $_errorArray;          //エラー一覧
     private $_checkFuncArray;      //チェック一回分の情報　を複数持つ配列
+    private $_maxTurn;             //最遅チェック順
 
     public function __construct($showName, $checkFuncArray) {
         $this->_showName       = $showName;
         $this->_checkFuncArray = $checkFuncArray;
         $this->_errorArray = array();
+
+        $_maxTurn = 0;
+        foreach($this->_checkFuncArray as $func){
+            $turn = 0;
+            while($func->isTurn($turn) == false) {
+                $turn ++;
+            }
+
+            if($turn > $this->_maxTurn) $this->_maxTurn = $turn;
+        }
     }
 
     //この項目についてのエラーをチェックし、配列として返す。
@@ -151,24 +163,18 @@ class Error_Checker
         $checkNum = 0;
         $functions = $this->_checkFuncArray;
 
-        for($turn = 0; $turn < 5; $turn++) {               //順番にチェック
-            
+        for($turn = 0; $turn <= $this-_maxturn; $turn++) {               //順番にチェック
             $endFlag = false;
             foreach ($functions as $funcData) {
                 if($funcData->isTurn($turn) == false) continue;
-                
+
                 $isError = $funcData->check($this->_errorArray, $turn);
                 unset($funcData);
 
-                if ($isError) {  //チェックを実行してエラーがあるか
+                if ($isError || empty($functions)) {  //チェックを実行してエラーがあるor全てチェックした
                     $endFlag = true;
-                } else {
-                    if(empty($functions)) {
-                        $endFlag = true;
-                        break;
-                    }
                 }
-            } 
+            }
             if($endFlag) break;
         }
         return $this->_errorArray;
@@ -195,7 +201,6 @@ function getTrimedTextArray($textArray) {
         }
     }
     
-
     return $trimedArray;
 }
 
@@ -208,8 +213,8 @@ function checkErrors() {
     //引数の配列は、コンストラクタにnewで渡せなかったので別に記述
 
     $nameCheckFunctions = array(
-            new Check_Function_Data('name_first', $TRIMED_POST['name_first'], '', 'checkIsNoText', 0),
-            new Check_Function_Data('name_last',  $TRIMED_POST['name_last'] , '', 'checkIsNoText', 0)
+        new Check_Function_Data('name_first', $TRIMED_POST['name_first'], '', 'checkIsNoText', 0),
+        new Check_Function_Data('name_last',  $TRIMED_POST['name_last'] , '', 'checkIsNoText', 0)
     );
     $nameChecker = new Error_Checker(
         '名前',
@@ -218,7 +223,7 @@ function checkErrors() {
 
     $sexCheckFunctions = array(
         new Check_Function_Data('sex', $TRIMED_POST['sex'], '', 'checkIsNoChoise', 0)
-    ); 
+    );
     $sexChecker = new Error_Checker(
         '性別',
         $sexCheckFunctions
@@ -239,7 +244,7 @@ function checkErrors() {
     $prefectureChecker = new Error_Checker(
         '都道府県',
         $prefectureCheckFunctions
-    ); 
+    );
 
     $mailAddressCheckFunctions = array(
         new Check_Function_Data('mail_address', $TRIMED_POST['mail_address'], '', 'checkIsNoText', 0),
@@ -274,7 +279,7 @@ function checkErrors() {
 
     //エラー一覧を取得
     $errors = array();
-    foreach ($checkers as $checker){
+    foreach ($checkers as $checker) {
         array_push($errors, $checker->getCheckResult());
     }
 
@@ -293,12 +298,12 @@ function checkJump() {
 }
 //エラーがあればエラー一覧、なけければ送信用ダミーボタンを表示
 //初回は処理を飛ばしたいので関数化
-function showError(){
+function showError() {
     if(empty($_POST) || isset($_POST['return'])) return;
 
     if(Error_Message::hasError()) {
         $errorTexts = Error_Message::getAllErrorString();
-        foreach ($errorTexts as $error){
+        foreach ($errorTexts as $error) {
             printf("%s<br>", $error);
         }
     } else {
@@ -335,7 +340,7 @@ function showError(){
   <form method="post" name="form" action="form.php">
     <fieldset>
     <legend>フォーム</legend>
-    
+
     <label>名前:</label>
     <input type="text" name="name_first" id="name_first" value="<?php print $_POST['name_first']; ?>">
     <input type="text" name="name_last" id="name_last" value="<?php print $_POST['name_last']; ?>">
@@ -355,9 +360,9 @@ function showError(){
     -
     <input type="text" name="post_last" id="post_last" maxlength="4" value="<?php print $_POST['post_last']; ?>">
     <br>
-    
+
     <label>都道府県:</label>
-    
+
     <select name="prefecture" id="prefecture" size=1 value="<?php print $_POST['prefecture']; ?>">
     <?php
     $PREFECTURES = array(
@@ -382,7 +387,7 @@ function showError(){
     <label>メールアドレス:</label>
     <input type="text" name="mail_address" id="mail" value="<?php print $_POST['mail_address']; ?>">
     <br>
-    
+
     <label>趣味</label>
     <?php
     $HOBBYS = array('music' => '音楽鑑賞','movie' => '映画鑑賞','other' => 'その他');
@@ -397,7 +402,7 @@ function showError(){
     ?>
     <input type="text" name="other_descript" id="other_descript" value="<?php print $_POST['other_descript']; ?>" onChange="checkOther();">
     <br>
-    
+
     <label>ご意見</label>
     <input type="text" id="opinion" name="opinion" value="<?php print $_POST['opinion']; ?>">
 

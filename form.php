@@ -184,19 +184,20 @@ class Error_Checker
 //文字配列orその配列の要素をトリムしたものを返す
 function getTrimedTextArray($textArray) {
     $trimedArray = array();
+    $trimChars='\t\n\r\0\x0B 　';
 
     //連想配列は、array_mergeを使わないと正しく追加できないらしい?
     foreach ($textArray as $key => $value) {
         if (is_array($value)) {
             $add = array();
             foreach ($value as $arrayKey => $arrayValue) {
-                $elem = array($arrayKey => $arrayValue);
+                $elem = array($arrayKey => trim($arrayValue, $trimChars));
                 $addBuf = array($key => $elem);
                 $add = array_merge($add, $addBuf);
             }
             $trimedArray = array_merge($trimedArray, $add);
         } else {
-            $add = array($key => $value);
+            $add = array($key => trim($value, $trimChars));
             $trimedArray = array_merge($trimedArray, $add);
         }
     }

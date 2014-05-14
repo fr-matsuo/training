@@ -338,7 +338,7 @@ function checkErrors() {
 //次のページに行けるならジャンプする関数。入力をform.phpに戻し、エラーがないならformCheck.phpへジャンプ
 //bodyの宣言で呼び出し
 function checkJump() {
-//    if (empty($_POST) || isset($_POST['return'])) {return;}
+    if (empty($_POST) || isset($_POST['return'])) {return;}
     
     checkErrors();
     if(Error_Message::hasError() == false ) {
@@ -348,7 +348,7 @@ function checkJump() {
 //エラーがあればエラー一覧、なけければ送信用ダミーボタンを表示
 //初回は処理を飛ばしたいので関数化
 function showError() {
-//    if(empty($_POST) || isset($_POST['return'])) return;
+    if(empty($_POST) || isset($_POST['return'])) return;
 
     if(Error_Message::hasError()) {
         $errorTexts = Error_Message::getAllErrorString();

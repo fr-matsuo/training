@@ -147,14 +147,15 @@ class Error_Checker
         $this->_checkFuncArray = $checkFuncArray;
         $this->_errorArray = array();
 
-        $_maxTurn = 0;
-        foreach($this->_checkFuncArray as $func){
+        //最大turnを検索
+        $this->_maxTurn = 0;
+        foreach($this->_checkFuncArray as $func) {
             $turn = 0;
             while($func->isTurn($turn) == false) {
-                $turn ++;
+                $turn++;
             }
 
-            if($turn > $this->_maxTurn) $this->_maxTurn = $turn;
+            if($turn > $this->_maxTurn) {$this->_maxTurn = $turn;}
         }
     }
 
@@ -163,7 +164,7 @@ class Error_Checker
         $checkNum = 0;
         $functions = $this->_checkFuncArray;
 
-        for($turn = 0; $turn <= $this-_maxturn; $turn++) {               //順番にチェック
+        for($turn = 0; $turn <= $this->_maxturn; $turn++) {               //順番にチェック
             $endFlag = false;
             foreach ($functions as $funcData) {
                 if($funcData->isTurn($turn) == false) continue;
@@ -184,7 +185,7 @@ class Error_Checker
 //文字配列orその配列の要素をトリムしたものを返す
 function getTrimedTextArray($textArray) {
     $trimedArray = array();
-    $trimChars='\t\n\r\0\x0B 　';
+    $trimChars=' 　';
 
     //連想配列は、array_mergeを使わないと正しく追加できないらしい?
     foreach ($textArray as $key => $value) {

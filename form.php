@@ -410,9 +410,10 @@ function showError() {
 
   <script type="text/javascript">
   <!--
-  function checkOther(){
-      var otherHobby = document.getElementById('other').value;
-      document.getElementById('other').checked = (otherHobby != '');
+  //何も入力されてないなら、その他のチェックを外す
+  function checkOther() {
+      var hobby = document.getElementById('other_descript');
+      if (hobby.value.length == 0) { document.getElementById('other').checked=false; }
   }
   -->
   </script>
@@ -487,7 +488,8 @@ function showError() {
                       $key, $elm, $checked, $key, $elm);
     }
     ?>
-    <input type="text" name="other_descript" id="other_descript" value="<?php print $_POST['other_descript']; ?>" onChange="checkOther();">
+    <input type="text" name="other_descript" id="other_descript" value="<?php print $_POST['other_descript']; ?>" 
+      onClick="document.getElementById('other').checked = true;" onBlur="checkOther()">
     <br>
 
     <label>ご意見</label>

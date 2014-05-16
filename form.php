@@ -207,12 +207,36 @@ function getSecureText($text) {
     return $forSQL;
 }
 
+//最初の字が指定した文字群か
+function isMBCharsPosFirst($text, $charArray) {
+    foreach($charArray as $char) {
+        $pos = mb_strpos($text, $char);
+        if($pos === 0) return true;
+    }
+    return false;
+}
+//最期の字が指定した文字群か
+function isMBCharsPosLast($text, $charArray) {
+    foreach($charArray as $char) {
+        $pos = mb_strrpos($text, $char);
+        if($pos === mb_strlen($text)-1) return true;
+    }
+    return false;
+}
 //文字配列orその配列の要素をトリムしたものを返す
 function getTrimedText($text) {
-    $TRIM_CHARS=' 　';
-    return trim($text, $TRIM_CHARS);
-}
+    $space = array(' ', '　');
 
+    while(isMBCharsPosFirst()) {
+        $text = mb_strlen($text, 1);
+    }
+    while(isMBCharsPosLast()) {
+        $text = mb_strlen($text, 0, mb_strlen($text)-1);
+    }
+
+    return $text;
+}
+ 
 //文字列をフォーマットしたものを返す
 function getFormatedText($text, $index) {
     //これらの関数を上から再帰的に適用する

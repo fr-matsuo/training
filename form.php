@@ -4,7 +4,7 @@
 class Error_Message
 {
     //エラー項目の名前
-    private static $_NAME = array(
+    private static $_name_list = array(
          'name_first'     => '姓',
          'name_last'      => '名',
          'sex'            => '性別',
@@ -15,7 +15,7 @@ class Error_Message
          'other_descript' => 'その他の詳細'
     );
     //エラーの内容
-    private static $_KIND = array(
+    private static $_kind_list = array(
         'noText'   => '入力',
         'noChoise' => '選択',
         'overText' => '字以内で入力',
@@ -33,8 +33,8 @@ class Error_Message
     private $_value; //'50'字以内などの値
 
     public function __construct($errorName, $errorKind, $errorValue) {
-        $this->_name  = Error_Message::$_NAME[$errorName];
-        $this->_kind  = Error_Message::$_KIND[$errorKind];
+        $this->_name  = Error_Message::$_name_list[$errorName];
+        $this->_kind  = Error_Message::$_kind_list[$errorKind];
         $this->_value = $errorValue;
 
         Error_Message::$_hasError = true;
@@ -140,8 +140,6 @@ class Check_Function_Data
     public function check(&$errorArray, $turn) { 
         $func = $this->_function;
         return  Check_Function_Data::$func($errorArray, $this->_data, $this->_name, $this->_value);
-        // return  Check_Function_Data::$this->_function($errorArray, $this->_data, $this->_name, $this->_value);
-        //とは書けないので,一旦funcに代入
     }
 }
 
@@ -196,7 +194,7 @@ class Error_Checker
 
 //SQLの入力に対してエスケープしたものを返す
 function getEscapeSQLText($text) {
-    $SEARCH_CHARS = array(
+    $search_chars = array(
         '"' => '&quot;',
         '&' => '&amp;',
         '<' => '&lt;',
@@ -205,7 +203,7 @@ function getEscapeSQLText($text) {
     );
 
     $replaced=$text;
-    foreach($SEARCH_CHARS as $before => $after) {
+    foreach($search_chars as $before => $after) {
         $buf      = $replaced;
         $replaced = str_replace($before, $after, $buf);
     }
@@ -252,15 +250,15 @@ function getTrimedText($text) {
 //文字列をフォーマットしたものを返す
 function getFormatedText($text, $index) {
     //これらの関数を上から再帰的に適用する
-    $FORMAT_FUNCTIONS = array(
+    $format_functions = array(
         'getTrimedText',
         'getSecureText'
     );
 
-    if($index == count($FORMAT_FUNCTIONS)) {
+    if($index == count($format_functions)) {
         return $text;
     } else {
-        $nextText = $FORMAT_FUNCTIONS[$index]($text, $index);
+        $nextText = $format_functions[$index]($text, $index);
         $index++;
         return getFormatedText($nextText, $index);
     }
@@ -292,14 +290,14 @@ function getFormatedTextArray($textArray) {
 
 //値のエラーをチェックし、エラー一覧を返す
 function checkErrors() {
-    $TRIMED_POST = getFormatedTextArray($_POST);
+    $formated_post = getFormatedTextArray($_POST);
 
     //エラーチェックの引数リスト作成
     //引数の配列は、コンストラクタにnewで渡せなかったので別に記述
 
     $nameCheckFunctions = array(
-        new Check_Function_Data('name_first', $TRIMED_POST['name_first'], '', 'checkIsNoText', 0),
-        new Check_Function_Data('name_last',  $TRIMED_POST['name_last'] , '', 'checkIsNoText', 0)
+        new Check_Function_Data('name_first', $formated_post['name_first'], '', 'checkIsNoText', 0),
+        new Check_Function_Data('name_last',  $formated_post['name_last'] , '', 'checkIsNoText', 0)
     );
     $nameChecker = new Error_Checker(
         '名前',
@@ -307,7 +305,7 @@ function checkErrors() {
     );
 
     $sexCheckFunctions = array(
-        new Check_Function_Data('sex', $TRIMED_POST['sex'], '', 'checkIsNoChoise', 0)
+        new Check_Function_Data('sex', $formated_post['sex'], '', 'checkIsNoChoise', 0)
     );
     $sexChecker = new Error_Checker(
         '性別',
@@ -315,10 +313,10 @@ function checkErrors() {
     );
 
     $postCheckFunctions = array(
-        new Check_Function_Data('post_first', $TRIMED_POST['post_first'], '', 'checkIsNoText', 0),
-        new Check_Function_Data('post_last',  $TRIMED_POST['post_last'],  '', 'checkIsNoText', 1),
-        new Check_Function_Data('post_first', $TRIMED_POST['post_first'], '', 'checkIsIllegal', 2),
-        new Check_Function_Data('post_last',  $TRIMED_POST['post_last'],  '', 'checkIsIllegal', 3)
+        new Check_Function_Data('post_first', $formated_post['post_first'], '', 'checkIsNoText', 0),
+        new Check_Function_Data('post_last',  $formated_post['post_last'],  '', 'checkIsNoText', 1),
+        new Check_Function_Data('post_first', $formated_post['post_first'], '', 'checkIsIllegal', 2),
+        new Check_Function_Data('post_last',  $formated_post['post_last'],  '', 'checkIsIllegal', 3)
     );
     $postChecker = new Error_Checker(
         '郵便番号',
@@ -326,7 +324,7 @@ function checkErrors() {
     );
 
     $prefectureCheckFunctions = array(
-        new Check_Function_Data('prefecture', $TRIMED_POST['prefecture'], '--', 'checkIsEmptyValue', 0)
+        new Check_Function_Data('prefecture', $formated_post['prefecture'], '--', 'checkIsEmptyValue', 0)
     );
     $prefectureChecker = new Error_Checker(
         '都道府県',
@@ -334,8 +332,8 @@ function checkErrors() {
     );
 
     $mailAddressCheckFunctions = array(
-        new Check_Function_Data('mail_address', $TRIMED_POST['mail_address'], '', 'checkIsNoText', 0),
-        new Check_Function_Data('mail_address', $TRIMED_POST['mail_address'], '', 'checkIsIllegal', 1)
+        new Check_Function_Data('mail_address', $formated_post['mail_address'], '', 'checkIsNoText', 0),
+        new Check_Function_Data('mail_address', $formated_post['mail_address'], '', 'checkIsIllegal', 1)
     );
     $mailAddressChecker = new Error_Checker(
         'メールアドレス',
@@ -343,10 +341,10 @@ function checkErrors() {
     );
 
     $hobbyCheckFunctions = array();
-    if (in_array('その他',$TRIMED_POST['hobby'])) {
+    if (in_array('その他',$formated_post['hobby'])) {
         array_push(
             $hobbyCheckFunctions,
-            new Check_Function_Data('other_descript', $TRIMED_POST['other_descript'], '', 'checkIsNoText', 0)
+            new Check_Function_Data('other_descript', $formated_post['other_descript'], '', 'checkIsNoText', 0)
         );
     }
     $hobbyChecker = new Error_Checker(
@@ -500,7 +498,7 @@ function showError() {
   </form>
   <form method="post" name="checkForm" action="formCheck.php">
   <?php
-  $FORMATED_POST = getFormatedTextArray($_POST);
+  $formated_post = getFormatedTextArray($_POST);
 
   $NAMES = array(
       'name_first', 'name_last', 'sex', 'post_first', 'post_last',
@@ -508,7 +506,7 @@ function showError() {
   );
 
   foreach($NAMES as $name) {
-      printf("<input type='hidden' name='%s' value='%s'>", $name, $FORMATED_POST[$name]);
+      printf("<input type='hidden' name='%s' value='%s'>", $name, $formated_post[$name]);
   }
 
   if(empty($checkList) == false) {

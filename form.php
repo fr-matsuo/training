@@ -164,7 +164,7 @@ class Error_Checker
         $checkNum = 0;
         $functions = $this->_checkFuncArray;
 
-        for($turn = 0; $turn <= $this->_maxturn; $turn++) {               //順番にチェック
+        for($turn = 0; $turn <= $this->_maxTurn; $turn++) {               //順番にチェック
             $endFlag = false;
             foreach ($functions as $funcData) {
                 if($funcData->isTurn($turn) == false) continue;

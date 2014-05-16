@@ -105,18 +105,30 @@ class Check_Function_Data
         return false;
     }
     public static function checkIsIllegal(&$errorArray, $data, $name, $dummy) {       //文法チェック
+        $patter;
+
         switch ($name) {
         case 'mail_address'://メールアドレス
             $pattern = '/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@[a-zA-Z0-9_-]+([a-zA-Z0-9\._-]+)+$/';
-            if (preg_match($pattern, $data) == false) {
-                array_push($errorArray, new Error_Message($name, 'illegal', ''));
-                return true;
-            }
-            return false;
+            break;
+
+        case 'post_first'://郵便番号前半
+            $pattern = "/[0-9]{3}/";
+            break;
+
+        case 'post_last'://郵便番号後半
+            $pattern = "/[0-9]{4}/";
+            break;
 
         default:
             return false;
         }
+        
+        if (preg_match($pattern, $data) == false) {
+            array_push($errorArray, new Error_Message($name, 'illegal', ''));
+            return true;
+        }
+        return false;
     }
 
     //ターンが一致するか
@@ -304,7 +316,9 @@ function checkErrors() {
 
     $postCheckFunctions = array(
         new Check_Function_Data('post_first', $TRIMED_POST['post_first'], '', 'checkIsNoText', 0),
-        new Check_Function_Data('post_last',  $TRIMED_POST['post_last'],  '', 'checkIsNoText', 1)
+        new Check_Function_Data('post_last',  $TRIMED_POST['post_last'],  '', 'checkIsNoText', 1),
+        new Check_Function_Data('post_first', $TRIMED_POST['post_first'], '', 'checkIsIllegal', 2),
+        new Check_Function_Data('post_last',  $TRIMED_POST['post_last'],  '', 'checkIsIllegal', 3)
     );
     $postChecker = new Error_Checker(
         '郵便番号',

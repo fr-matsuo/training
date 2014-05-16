@@ -43,10 +43,10 @@ class Error_Message
     }
     
     //一つでも生成されたら、エラーがあるのでtrue
-    public static function hasError(){ return Error_Message::$_hasError; }
+    public static function hasError() { return Error_Message::$_hasError; }
 
     //全エラーの文字列を取得
-    public static function getAllErrorString(){ return Error_Message::$_allErrorString; }
+    public static function getAllErrorString() { return Error_Message::$_allErrorString; }
 
     //このエラーの表示を一覧に追加
     private function _addErrorString() {
@@ -165,7 +165,7 @@ class Error_Checker
                 $turn++;
             }
 
-            if($turn > $this->_maxTurn) {$this->_maxTurn = $turn;}
+            if($turn > $this->_maxTurn) $this->_maxTurn = $turn;
         }
     }
 
@@ -374,7 +374,7 @@ function checkErrors() {
 //次のページに行けるならジャンプする関数。入力をform.phpに戻し、エラーがないならformCheck.phpへジャンプ
 //bodyの宣言で呼び出し
 function checkJump() {
-    if (empty($_POST) || isset($_POST['return'])) {return;}
+    if (empty($_POST) || isset($_POST['return'])) return;
     
     checkErrors();
     if(Error_Message::hasError() == false ) {
@@ -411,7 +411,7 @@ function showError() {
   //何も入力されてないなら、その他のチェックを外す
   function checkOther() {
       var hobby = document.getElementById('other_descript');
-      if (hobby.value.length == 0) { document.getElementById('other').checked=false; }
+      if (hobby.value.length == 0) document.getElementById('other').checked=false;
   }
   -->
   </script>

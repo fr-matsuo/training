@@ -1,24 +1,27 @@
 <?php
-//_POSTから前後の空白を除いたもの
-$TRIMED_POST = getTrimedPOST();
+$formatedPOST = getFormatedTextArray($_POST);
 
-//_TRIMED_POST_DATAを取得
-function getTrimedPOST() {
-    $trimedArray = array();
+function getFormatedTextArray($array) {
+    $ret = array();
 
-    foreach ($_POST as $key => $value) {
-        if (is_array($value)) {
-            foreach ($value as $arrayKey => $arrayValue) {
-                $trimedArray[$key][$arrayKey] = trim($arrayValue);
-            }
+    foreach($array as $key => $value) {
+        if(is_array($value) == false) {
+            $add = array($key => htmlspecialchars($value));
+            $ret = array_merge($ret, $add);
         } else {
-            $trimedArray[$key] = trim($value);
+            $add = array();
+            foreach ($value as $arrayKey => $arrayValue) {
+                $elem = array($arrayKey => htmlspecialchars($arrayValue));
+                $addBuf = array($key => $elem);
+                $ret = array_merge($add, $addBuf);
+            }
         }
     }
 
-    return $trimedArray;
+    return $ret;
 }
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,51 +38,51 @@ function getTrimedPOST() {
   </header>
 
   <section>
-    <form name="form" method="post" action="finish.php">
+    <form name="form" method="post" action="formCheck.php">
       <p>
         名前：
         <?php
-        printf("%s %s", $TRIMED_POST['name_first'] ,$TRIMED_POST['name_last']);
+        printf("%s %s", $formatedPOST['name_first'] ,$formatedPOST['name_last']);
         ?>
       </p>
       <p>
         性別：
         <?php
-        print $TRIMED_POST['sex'];
+        print $formatedPOST['sex'];
         ?>
       </p>
        
       <p>
         郵便番号:
         <?php
-        printf("%s-%s", $TRIMED_POST['post_first'], $TRIMED_POST['post_last']);
+        printf("%s-%s", $formatedPOST['post_first'], $formatedPOST['post_last']);
         ?>
       </p>
       
       <p>
         都道府県:
         <?php
-        print $TRIMED_POST['prefecture'];
+        print $formatedPOST['prefecture'];
         ?>
       </p>
       
       <p>
         メールアドレス:
         <?php
-        print $TRIMED_POST['mail_address'];
+        print $formatedPOST['mail_address'];
         ?>
       </p>
 
       <p>
         趣味:
         <?php
-        if (isSet($TRIMED_POST['hobby'])) {
-            foreach ($TRIMED_POST['hobby'] as $hobby) {
+        if (isSet($formatedPOST['hobby'])) {
+            foreach ($formatedPOST['hobby'] as $hobby) {
                 printf("%s ", $hobby);
             }
             //その他があれば詳細を表示
-            if (in_array('その他', $TRIMED_POST['hobby'])) {
-                printf("(%s)", $TRIMED_POST['other_descript']);
+            if (in_array('その他', $formatedPOST['hobby'])) {
+                printf("(%s)", $formatedPOST['other_descript']);
             }
         }
         ?>
@@ -87,28 +90,28 @@ function getTrimedPOST() {
       
       <p>
         ご意見:
-        <?php print $TRIMED_POST['opinion']; ?>
+        <?php print $formatedPOST['opinion']; ?>
       </p>
       <input type="submit" value="送信">
       <input type="button" value="戻る" onClick="form.action=document.returnForm.submit();">
     </form>  
     <form name="returnForm" method="post" action="form.php">
-      <input type='hidden' name='name_first'     value="<?php printf('%s', $TRIMED_POST['name_first']);   ?>">
-      <input type='hidden' name='name_last'      value="<?php printf('%s', $TRIMED_POST['name_last']);    ?>">
-      <input type='hidden' name='sex'            value="<?php printf('%s', $TRIMED_POST['sex']);          ?>">
-      <input type='hidden' name='post_first'     value="<?php printf('%s', $TRIMED_POST['post_first']);   ?>">
-      <input type='hidden' name='post_last'      value="<?php printf('%s', $TRIMED_POST['post_last']);    ?>">
-      <input type='hidden' name='prefecture'     value="<?php printf('%s', $TRIMED_POST['prefecture']);   ?>">
-      <input type='hidden' name='mail_address'   value="<?php printf('%s', $TRIMED_POST['mail_address']); ?>">
+      <input type='hidden' name='name_first'     value="<?php printf('%s', $formatedPOST['name_first']);   ?>">
+      <input type='hidden' name='name_last'      value="<?php printf('%s', $formatedPOST['name_last']);    ?>">
+      <input type='hidden' name='sex'            value="<?php printf('%s', $formatedPOST['sex']);          ?>">
+      <input type='hidden' name='post_first'     value="<?php printf('%s', $formatedPOST['post_first']);   ?>">
+      <input type='hidden' name='post_last'      value="<?php printf('%s', $formatedPOST['post_last']);    ?>">
+      <input type='hidden' name='prefecture'     value="<?php printf('%s', $formatedPOST['prefecture']);   ?>">
+      <input type='hidden' name='mail_address'   value="<?php printf('%s', $formatedPOST['mail_address']); ?>">
       <?php
-      if(empty($TRIMED_POST['hobby']) == false) {
-          foreach($TRIMED_POST['hobby'] as $hobby) {
+      if(empty($formatedPOST['hobby']) == false) {
+          foreach($formatedPOST['hobby'] as $hobby) {
               printf("<input type='hidden' name='hobby[]' value='%s'>", $hobby);
           }
       }
       ?>
-      <input type='hidden' name='other_descript' value="<?php printf('%s', $TRIMED_POST['other_descript']); ?>">
-      <input type='hidden' name='opinion'        value="<?php printf('%s', $TRIMED_POST['opinion']);        ?>">
+      <input type='hidden' name='other_descript' value="<?php printf('%s', $formatedPOST['other_descript']); ?>">
+      <input type='hidden' name='opinion'        value="<?php printf('%s', $formatedPOST['opinion']);        ?>">
       <!-- 確認画面から戻ったというフラグ、自動ジャンプ防止用--> 
       <input type='hidden' name='return' value='return'>
     </form>

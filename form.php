@@ -191,29 +191,9 @@ class Error_Checker
     }
 }
 
-//SQLの入力に対してエスケープしたものを返す
-function getEscapeSQLText($text) {
-    $search_chars = array(
-        '"' => '&quot;',
-        '&' => '&amp;',
-        '<' => '&lt;',
-        '>' => '&gt;',
-        '\'' => '&#39;'
-    );
-
-    $replaced=$text;
-    foreach($search_chars as $before => $after) {
-        $buf      = $replaced;
-        $replaced = str_replace($before, $after, $buf);
-    }
-    return $replaced;
-}
-
 //文字列を安全なものに変換したものを返す
 function getSecureText($text) {
-    $forHtml = htmlspecialchars($text);
-    $forSQL  = getEscapeSQLText($forHtml);
-    return $forSQL;
+    return htmlspecialchars($text,ENT_QUOTES);
 }
 
 //最初の字が指定した文字群か
@@ -257,7 +237,7 @@ function getFormatedText($text, $index) {
     if($index == count($format_functions)) {
         return $text;
     } else {
-        $nextText = $format_functions[$index]($text, $index);
+        $nextText = $format_functions[$index]($text);
         $index++;
         return getFormatedText($nextText, $index);
     }
@@ -265,8 +245,7 @@ function getFormatedText($text, $index) {
 
 //入力値をフォーマットしたものを返す
 function getFormatedTextArray($textArray) {
-    $trimedArray = array();
-    $trimChars=' 　';
+    $formatedArray = array();
 
     //連想配列は、array_mergeを使わないと正しく追加できないらしい?
     foreach ($textArray as $key => $value) {
@@ -277,19 +256,19 @@ function getFormatedTextArray($textArray) {
                 $addBuf = array($key => $elem);
                 $add = array_merge($add, $addBuf);
             }
-            $trimedArray = array_merge($trimedArray, $add);
+            $formatedArray = array_merge($formatedArray, $add);
         } else {
             $add = array($key => getFormatedText($value, 0));
-            $trimedArray = array_merge($trimedArray, $add);
+            $formatedArray = array_merge($formatedArray, $add);
         }
     }
     
-    return $trimedArray;
+    return $formatedArray;
 }
 
 //値のエラーをチェックし、エラー一覧を返す
 function checkErrors() {
-    $formated_post = getFormatedTextArray($_POST);
+    $formated_post = $_POST;//getFormatedTextArray($_POST);
 
     //エラーチェックの引数リスト作成
     //引数の配列は、コンストラクタにnewで渡せなかったので別に記述
@@ -401,11 +380,11 @@ function showError() {
 
 //ポストデータがあればその文字列を、なければ空文字を返す
 function getPOST($key) {
-    return (isset($_POST[$key])) ? $_POST[$key] : '';
+    return (isset($_POST[$key])) ? getFormatedText($_POST[$key], 0) : '';
 }
 //getPOSTの配列版
 function getPOSTArray($key) {
-    return (isset($_POST[$key])) ? $_POST[$key] : array();
+    return (isset($_POST[$key])) ? getFormatedText($_POST[$key], 0) : array();
 }
 //ポストの値があれば表示、なければ空白を表示
 function showPOST($key) {
@@ -517,9 +496,10 @@ function showPOST($key) {
     <input type="submit" value="確認" onClick=>
     </fieldset>
   </form>
+
   <form method="post" name="checkForm" action="formCheck.php">
   <?php
-  $formated_post = getFormatedTextArray($_POST);
+  $formated_post = /*$_POST;*/getFormatedTextArray($_POST);
 
   $NAMES = array(
       'name_first', 'name_last', 'sex', 'post_first', 'post_last',
@@ -533,11 +513,12 @@ function showPOST($key) {
 
   if(empty($checkList) == false) {
       foreach ($checkList as $checked) {
-          printf("<input type='hidden' name='hobby[]' value='%s'>", $checked);
+          printf("<input type='hidden' name='hobby[]' value='%s'>", getFormatedText($checked,0));
       }
   }
   showError();
   ?>
+  </form>
 
   <footer>
     <p>Copyright 2014</p>

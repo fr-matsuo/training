@@ -50,8 +50,7 @@ class Error_Message
 
     //このエラーの表示を一覧に追加
     private function _addErrorString() {
-        $valueText = (empty($this->_value)) ? (string)$this->_value : '';
-        $text      = sprintf('%sを%s%sしてください。', $this->_name, $valueText, $this->_kind);
+        $text      = sprintf('%sを%s%sしてください。', $this->_name, $this->_value, $this->_kind);
         array_push(Error_Message::$_allErrorString, $text);
     }
 }
@@ -99,7 +98,7 @@ class Check_Function_Data
     }
     public static function checkIsOverText(&$errorArray, $data, $name, $value) {      //字数チェック
         if (mb_strlen($data) > $value) {
-            array_push($errorArray, new Error_Message($name, 'overText', $value));
+            array_push($errorArray, new Error_Message($name, 'overText', strval($value)));
             return true;
         }
         return false;
@@ -297,7 +296,9 @@ function checkErrors() {
 
     $nameCheckFunctions = array(
         new Check_Function_Data('name_first', $formated_post['name_first'], '', 'checkIsNoText', 0),
-        new Check_Function_Data('name_last',  $formated_post['name_last'] , '', 'checkIsNoText', 0)
+        new Check_Function_Data('name_last',  $formated_post['name_last'] , '', 'checkIsNoText', 0),
+        new Check_Function_Data('name_first', $formated_post['name_first'], 50, 'checkIsOverText', 1),
+        new Check_Function_Data('name_last',  $formated_post['name_last'] , 50, 'checkIsOverText', 1)
     );
     $nameChecker = new Error_Checker(
         '名前',

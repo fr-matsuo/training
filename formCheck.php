@@ -11,9 +11,9 @@ function getFormatedTextArray($array) {
         } else {
             $add = array();
             foreach ($value as $arrayKey => $arrayValue) {
-                $elem = array($arrayKey => htmlspecialchars($arrayValue));
+                $elem   = array($arrayKey => htmlspecialchars($arrayValue));
                 $addBuf = array($key => $elem);
-                $ret = array_merge($add, $addBuf);
+                $ret    = array_merge($add, $addBuf);
             }
         }
     }

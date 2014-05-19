@@ -237,11 +237,11 @@ function isMBCharsPosLast($text, $charArray) {
 function getTrimedText($text) {
     $space = array(' ', '　');
 
-    while(isMBCharsPosFirst()) {
-        $text = mb_strlen($text, 1);
+    while(isMBCharsPosFirst($text, $space)) {
+        $text = mb_substr($text, 1);
     }
-    while(isMBCharsPosLast()) {
-        $text = mb_strlen($text, 0, mb_strlen($text)-1);
+    while(isMBCharsPosLast($text, $space)) {
+        $text = mb_substr($text, 0, mb_strlen($text)-1);
     }
 
     return $text;
@@ -304,8 +304,9 @@ function checkErrors() {
         $nameCheckFunctions
     );
 
+    $sexValue = isset($formated_post['sex']) ? $formated_post['sex'] : '';
     $sexCheckFunctions = array(
-        new Check_Function_Data('sex', $formated_post['sex'], '', 'checkIsNoChoise', 0)
+        new Check_Function_Data('sex', $sexValue, '', 'checkIsNoChoise', 0)
     );
     $sexChecker = new Error_Checker(
         '性別',
@@ -341,10 +342,11 @@ function checkErrors() {
     );
 
     $hobbyCheckFunctions = array();
-    if (in_array('その他',$formated_post['hobby'])) {
+    if (isset($formated_post['hobby']) && in_array('その他',$formated_post['hobby'])) {
+        $otherHobbyValue = isset($formated_post['other_descript'])? $formated_post['other_descript'] : '';
         array_push(
             $hobbyCheckFunctions,
-            new Check_Function_Data('other_descript', $formated_post['other_descript'], '', 'checkIsNoText', 0)
+            new Check_Function_Data('other_descript', $otherHobbyValue, '', 'checkIsNoText', 0)
         );
     }
     $hobbyChecker = new Error_Checker(
@@ -381,7 +383,7 @@ function checkJump() {
         print "onLoad='document.checkForm.submit();'";
     }      
 }
-//エラーがあればエラー一覧、なけければ送信用ダミーボタンを表示
+//エラーがあればエラー一覧を表示
 //初回は処理を飛ばしたいので関数化
 function showError() {
     if(empty($_POST) || isset($_POST['return'])) return;
@@ -395,6 +397,20 @@ function showError() {
         print "<input type='submit' value='dummy'>";
     }
 }
+
+//ポストデータがあればその文字列を、なければ空文字を返す
+function getPOST($key) {
+    return (isset($_POST[$key])) ? $_POST[$key] : '';
+}
+//getPOSTの配列版
+function getPOSTArray($key) {
+    return (isset($_POST[$key])) ? $_POST[$key] : array();
+}
+//ポストの値があれば表示、なければ空白を表示
+function showPOST($key) {
+    print getPOST($key);
+}
+
 ?>
 <!DOCTYPE html>
 
@@ -428,28 +444,28 @@ function showError() {
     <legend>フォーム</legend>
 
     <label>名前:</label>
-    <input type="text" name="name_first" id="name_first" value="<?php print $_POST['name_first']; ?>">
-    <input type="text" name="name_last" id="name_last" value="<?php print $_POST['name_last']; ?>">
+    <input type="text" name="name_first" id="name_first" value="<?php showPOST('name_first'); ?>">
+    <input type="text" name="name_last" id="name_last" value="<?php showPOST('name_last'); ?>">
     <br> 
     
     <label>性別:</label>
       <?php
-      $manChecked   = ($_POST['sex'] == "男性")? "checked" : "";
-      $womanChecked = ($_POST['sex'] == "女性")? "checked" : "";
+      $manChecked   = (getPOST('sex') == "男性")? "checked" : "";
+      $womanChecked = (getPOST('sex') == "女性")? "checked" : "";
       ?>
     <input type="radio" name="sex" id="man" value="男性" <?php print $manChecked; ?>><label for="man">男性</label>
     <input type="radio" name="sex" id="woman" value="女性" <?php print $womanChecked; ?>><label for="woman">女性</label>
     <br>
 
     <label>郵便番号:</label>
-    <input type="text" name="post_first" id="post_first" maxlength="3" value="<?php print $_POST['post_first']; ?>">
+    <input type="text" name="post_first" id="post_first" maxlength="3" value="<?php showPOST('post_first'); ?>">
     -
-    <input type="text" name="post_last" id="post_last" maxlength="4" value="<?php print $_POST['post_last']; ?>">
+    <input type="text" name="post_last" id="post_last" maxlength="4" value="<?php showPOST('post_last'); ?>">
     <br>
 
     <label>都道府県:</label>
 
-    <select name="prefecture" id="prefecture" size=1 value="<?php print $_POST['prefecture']; ?>">
+    <select name="prefecture" id="prefecture" size=1 value="<?php showPOST('prefecture'); ?>">
     <?php
     $PREFECTURES = array(
         '--',
@@ -463,7 +479,7 @@ function showError() {
     );
 
     foreach ($PREFECTURES as $elm) {
-        $selected = ($_POST['prefecture'] == $elm) ? 'selected' : '';
+        $selected = (getPOST('prefecture') == $elm) ? 'selected' : '';
         printf("<option value='%s' %s>%s</option>", $elm, $selected, $elm);
     }
     ?>
@@ -471,27 +487,31 @@ function showError() {
     <br>
     
     <label>メールアドレス:</label>
-    <input type="text" name="mail_address" id="mail" value="<?php print $_POST['mail_address']; ?>">
+    <input type="text" name="mail_address" id="mail" value="<?php showPOST('mail_address'); ?>">
     <br>
 
     <label>趣味</label>
     <?php
     $HOBBYS = array('music' => '音楽鑑賞','movie' => '映画鑑賞','other' => 'その他');
 
-    $checkList = $_POST['hobby'];
+    $checkList = getPOST('hobby');
 
     foreach ($HOBBYS as $key => $elm) {
-        $checked = (in_array($elm, $checkList)) ? 'checked' : '';
+        $checked = '';
+        
+        if(empty($checkList) == false) {
+            $checked  = (in_array($elm, $checkList)) ? 'checked' : '';
+        }
         printf("<input type='checkbox' id='%s' name='hobby[]' value='%s' %s><label for='%s'>%s</label>",
                       $key, $elm, $checked, $key, $elm);
     }
     ?>
-    <input type="text" name="other_descript" id="other_descript" value="<?php print $_POST['other_descript']; ?>" 
+    <input type="text" name="other_descript" id="other_descript" value="<?php showPOST('other_descript'); ?>" 
       onClick="document.getElementById('other').checked = true;" onBlur="checkOther()">
     <br>
 
     <label>ご意見</label>
-    <input type="text" id="opinion" name="opinion" value="<?php print $_POST['opinion']; ?>">
+    <input type="text" id="opinion" name="opinion" value="<?php showPOST('opinion'); ?>">
 
     <input type="submit" value="確認" onClick=>
     </fieldset>
@@ -506,7 +526,8 @@ function showError() {
   );
 
   foreach($NAMES as $name) {
-      printf("<input type='hidden' name='%s' value='%s'>", $name, $formated_post[$name]);
+      $input = (isset($formated_post[$name])) ? $formated_post[$name] : '';
+      printf("<input type='hidden' name='%s' value='%s'>", $name, $input);
   }
 
   if(empty($checkList) == false) {

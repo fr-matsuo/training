@@ -71,7 +71,7 @@ class Check_Function_Data
         $this->_data     = $args[1];
         $this->_function = $args[2];
         $this->_turn     = $args[3];
-        if(func_num_args() == 5) $this->_limit = $args[4];
+        if (func_num_args() == 5) $this->_limit = $args[4];
     }
 
     //チェック関数に配列を渡すと、エラーの場合のみError_Infoのインスタンスを生成、渡された配列に追加
@@ -140,7 +140,7 @@ class Check_Function_Data
     public function check(&$errorArray, $turn) { 
         $func = $this->_function;
 
-        switch($this->_function) {
+        switch ($this->_function) {
         case 'checkIsNoText':
         case 'checkIsNoChoise':
         case 'checkIsIllegal':
@@ -171,13 +171,13 @@ class Error_Checker
 
         //最大turnを検索
         $this->_maxTurn = 0;
-        foreach($this->_checkFuncArray as $func) {
+        foreach ($this->_checkFuncArray as $func) {
             $turn = 0;
-            while($func->isTurn($turn) == false) {
+            while ($func->isTurn($turn) == false) {
                 $turn++;
             }
 
-            if($turn > $this->_maxTurn) $this->_maxTurn = $turn;
+            if ($turn > $this->_maxTurn) $this->_maxTurn = $turn;
         }
     }
 
@@ -186,19 +186,19 @@ class Error_Checker
         $checkNum = 0;
         $functions = $this->_checkFuncArray;
 
-        for($turn = 0; $turn <= $this->_maxTurn; $turn++) {               //順番にチェック
+        for ($turn = 0; $turn <= $this->_maxTurn; $turn++) {               //順番にチェック
             $endFlag = false;
             foreach ($functions as $funcData) {
-                if($funcData->isTurn($turn) == false) continue;
+                if ($funcData->isTurn($turn) == false) continue;
 
                 $isError = $funcData->check($this->_errorArray, $turn);
-                unset($funcData);
+                unset ($funcData);
 
                 if ($isError || empty($functions)) {  //チェックを実行してエラーがあるor全てチェックした
                     $endFlag = true;
                 }
             }
-            if($endFlag) break;
+            if ($endFlag) break;
         }
         return $this->_errorArray;
     }
@@ -211,15 +211,15 @@ function getSecureText($text) {
 
 //最初の字が指定した文字群か
 function isMBCharsPosFirst($text, $charArray) {
-    foreach($charArray as $char) {
+    foreach ($charArray as $char) {
         $pos = mb_strpos($text, $char);
-        if($pos === 0) return true;
+        if ($pos === 0) return true;
     }
     return false;
 }
 //最期の字が指定した文字群か
 function isMBCharsPosLast($text, $charArray) {
-    foreach($charArray as $char) {
+    foreach ($charArray as $char) {
         $pos = mb_strrpos($text, $char);
         if($pos === mb_strlen($text)-1) return true;
     }
@@ -229,10 +229,10 @@ function isMBCharsPosLast($text, $charArray) {
 function getTrimedText($text) {
     $space = array(' ', '　');
 
-    while(isMBCharsPosFirst($text, $space)) {
+    while (isMBCharsPosFirst($text, $space)) {
         $text = mb_substr($text, 1);
     }
-    while(isMBCharsPosLast($text, $space)) {
+    while (isMBCharsPosLast($text, $space)) {
         $text = mb_substr($text, 0, mb_strlen($text)-1);
     }
 
@@ -247,7 +247,7 @@ function getFormatedText($text, $index) {
         'getSecureText'
     );
 
-    if($index == count($format_functions)) {
+    if ($index == count($format_functions)) {
         return $text;
     } else {
         $nextText = $format_functions[$index]($text);
@@ -369,14 +369,14 @@ function checkJump() {
     if (empty($_POST) || isset($_POST['return'])) return;
     
     checkErrors();
-    if(Error_Message::hasError() == false ) {
+    if (Error_Message::hasError() == false ) {
         print "onLoad='document.checkForm.submit();'";
     }      
 }
 //エラーがあればエラー一覧を表示
 //初回は処理を飛ばしたいので関数化
 function showError() {
-    if(empty($_POST) || isset($_POST['return'])) return;
+    if (empty($_POST) || isset($_POST['return'])) return;
 
     if(Error_Message::hasError()) {
         $errorTexts = Error_Message::getAllErrorString();
@@ -395,9 +395,9 @@ function getPOST($key) {
 //getPOSTの配列版
 function getPOSTArray($key) {
     $ret = array();
-    if(isset($_POST[$key]) == false || is_array($_POST[$key]) == false) return $ret;
+    if (isset($_POST[$key]) == false || is_array($_POST[$key]) == false) return $ret;
     
-    foreach($_POST[$key] as $key => $value) {
+    foreach ($_POST[$key] as $key => $value) {
         $ret += array($key => getFormatedText($value,0));
     }
     return $ret;
@@ -495,7 +495,7 @@ function showPOST($key) {
     foreach ($HOBBYS as $key => $elm) {
         $checked = '';
         
-        if(empty($checkList) == false) {
+        if (empty($checkList) == false) {
             $checked  = (in_array($elm, $checkList)) ? 'checked' : '';
         }
         printf("<input type='checkbox' id='%s' name='hobby[]' value='%s' %s><label for='%s'>%s</label>",
@@ -522,13 +522,13 @@ function showPOST($key) {
       'prefecture','mail_address', 'other_descript', 'opinion'
   );
 
-  foreach($NAMES as $name) {
+  foreach ($NAMES as $name) {
       $input = (isset($formated_post[$name])) ? $formated_post[$name] : '';
       printf("<input type='hidden' name='%s' value='%s'>", $name, $input);
   }
 
-  if(isset($_POST['hobby'])) {
-      foreach($_POST['hobby'] as $hobby) {
+  if (isset($_POST['hobby'])) {
+      foreach ($_POST['hobby'] as $hobby) {
           printf("<input type='hidden' name='hobby[]' value='%s'>", $hobby);
       }
   }

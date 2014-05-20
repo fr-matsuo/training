@@ -4,8 +4,8 @@ $formatedPOST = getFormatedTextArray($_POST);
 function getFormatedTextArray($array) {
     $ret = array();
 
-    foreach($array as $key => $value) {
-        if(is_array($value) == false) {
+    foreach ($array as $key => $value) {
+        if (is_array($value) == false) {
             $ret += array($key => htmlspecialchars($value));
         } else {
             $add = array();
@@ -103,8 +103,8 @@ function getFormatedTextArray($array) {
       <input type='hidden' name='prefecture'     value="<?php printf('%s', $formatedPOST['prefecture']);   ?>">
       <input type='hidden' name='mail_address'   value="<?php printf('%s', $formatedPOST['mail_address']); ?>">
       <?php
-      if(empty($formatedPOST['hobby']) == false) {
-          foreach($formatedPOST['hobby'] as $hobby) {
+      if (empty($formatedPOST['hobby']) == false) {
+          foreach ($formatedPOST['hobby'] as $hobby) {
               printf("<input type='hidden' name='hobby[]' value='%s'>", $hobby);
           }
       }

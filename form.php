@@ -83,7 +83,7 @@ class Check_Function_Data
     }
     public static function checkIsEmptyValue(&$error_array, $data, $name, $empty_value) {//必須入力チェック(空を表す文字列と一致しないか)
         if ($data == $empty_value) {
-            array_push($error_array, new Error_Message($name, 'noText', ''));
+            array_push($error_array, new Error_Message($name, 'noChoise', ''));
             return true;
         }
         return false;
@@ -191,7 +191,7 @@ class Error_Checker
                 unset ($func_data);
 
                 if ($is_error || empty($functions)) {  //チェックを実行してエラーがあるor全てチェックした
-                    $endflag = true;
+                    $end_flag = true;
                 }
             }
             if ($end_flag) break;
@@ -217,7 +217,7 @@ function isMBCharsPosFirst($text, $char_array) {
 function isMBCharsPosLast($text, $char_array) {
     foreach ($char_array as $char) {
         $pos = mb_strrpos($text, $char);
-        if ($pos === mb_strlen($text)-1) return true;
+        if ($pos === mb_strlen($text) - 1) return true;
     }
     return false;
 }
@@ -326,8 +326,8 @@ function checkErrors() {
     );
 
     $hobby_check_functions = array();
-    if (isset($formated_post['hobby']) && in_array('その他',$formated_post['hobby'])) {
-        $other_hobby_value = isset($formated_post['other_descript'])? $formated_post['other_descript'] : '';
+    if (isset($formated_post['hobby']) && in_array('その他', $formated_post['hobby'])) {
+        $other_hobby_value = isset($formated_post['other_descript']) ? $formated_post['other_descript'] : '';
         array_push(
             $hobby_check_functions,
             new Check_Function_Data('other_descript', $other_hobby_value, 'checkIsNoText', 0)
@@ -386,7 +386,7 @@ function getPOST($key) {
 //getPOSTの配列版
 function getPOSTArray($key) {
     $ret = array();
-    if (isset($_POST[$key]) == false || is_array($_POST[$key]) == false) return $ret;
+    if (!isset($_POST[$key]) || !is_array($_POST[$key])) return $ret;
     
     foreach ($_POST[$key] as $key => $value) {
         $ret += array($key => getFormatedText($value,0));

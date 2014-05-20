@@ -408,16 +408,6 @@ function showPOST($key) {
   <link rel="stylesheet" type="text/css" href="common.css">
   <link rel="stylesheet" type="text/css" href="form.css">
   <title>フォーム画面</title>  
-
-  <script type="text/javascript">
-  <!--
-  //何も入力されてないなら、その他のチェックを外す
-  function checkOther() {
-      var hobby = document.getElementById('other_descript');
-      if (hobby.value.length == 0) document.getElementById('other').checked=false;
-  }
-  -->
-  </script>
 </head>
 
 <body <?php checkJump(); ?> >
@@ -487,14 +477,13 @@ function showPOST($key) {
         $checked = '';
         
         if (empty($check_list) == false) {
-            $checked  = (in_array($elm, $check_list)) ? 'checked' : '';
+            $checked = (in_array($elm, $check_list)) ? 'checked' : '';
         }
         printf("<input type='checkbox' id='%s' name='hobby[]' value='%s' %s><label for='%s'>%s</label>",
                       $key, $elm, $checked, $key, $elm);
     }
     ?>
-    <input type="text" name="other_descript" id="other_descript" value="<?php showPOST('other_descript'); ?>" 
-      onClick="document.getElementById('other').checked = true;" onBlur="checkOther()">
+    <input type="text" name="other_descript" id="other_descript" value="<?php showPOST('other_descript'); ?>">
     <br>
 
     <label>ご意見</label>
@@ -522,6 +511,11 @@ function showPOST($key) {
       foreach ($_POST['hobby'] as $hobby) {
           printf("<input type='hidden' name='hobby[]' value='%s'>", $hobby);
       }
+  }
+
+  //その他の趣味の詳細が入力されていたら、その他にチェックを付与
+  if (!empty($formated_post['other_descript']) && !in_array('その他', $_POST['hobby'])) {
+      print "<input type='hidden' name='hobby[]' value='その他'>";
   }
 
   showError();

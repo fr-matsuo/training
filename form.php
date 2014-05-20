@@ -1,6 +1,5 @@
 <?php
 //エラーのメッセージデータを表し、エラーの有無や配列の出力を行う。
-//html内では、hasError()でのエラーの有無の確認のみ直接呼び出す
 class Error_Message
 {
     //エラー項目の名前
@@ -56,7 +55,6 @@ class Error_Message
 }
 
 //チェック関数一回実行分の情報を保持・実行し、ErrorInfoを生成する.
-//html内では直接呼ばない
 class Check_Function_Data
 {
     private $_name;     //Error_InfoのNAMEに対応する項目名
@@ -156,7 +154,6 @@ class Check_Function_Data
 }
 
 //名前や性別など、一つの項目についてのエラーチェックを行う。
-//checkErrors()から呼ばれるgetCheckResult()によりエラー一覧の配列を取得する
 class Error_Checker
 {
     private $_showName;            //項目名　名前　性別　など
@@ -186,7 +183,7 @@ class Error_Checker
         $checkNum = 0;
         $functions = $this->_checkFuncArray;
 
-        for ($turn = 0; $turn <= $this->_maxTurn; $turn++) {               //順番にチェック
+        for ($turn = 0; $turn <= $this->_maxTurn; $turn++) {//実行順番毎にチェック
             $endFlag = false;
             foreach ($functions as $funcData) {
                 if ($funcData->isTurn($turn) == false) continue;
@@ -260,7 +257,6 @@ function getFormatedText($text, $index) {
 function getFormatedTextArray($textArray) {
     $formatedArray = array();
 
-    //連想配列は、array_mergeを使わないと正しく追加できないらしい?
     foreach ($textArray as $key => $value) {
         if (is_array($value)) {
             $add = array();
@@ -281,7 +277,6 @@ function checkErrors() {
     $formated_post = getFormatedTextArray($_POST);
 
     //エラーチェックの引数リスト作成
-    //引数の配列は、コンストラクタにnewで渡せなかったので別に記述
 
     $nameCheckFunctions = array(
         new Check_Function_Data('name_first', $formated_post['name_first'], 'checkIsNoText', 0),
@@ -344,7 +339,6 @@ function checkErrors() {
         $hobbyCheckFunctions
     );
 
-    //foreachで回すために上記を格納
     $checkers = array(
         $nameChecker,
         $sexChecker,
@@ -364,7 +358,6 @@ function checkErrors() {
 }
 
 //次のページに行けるならジャンプする関数。入力をform.phpに戻し、エラーがないならformCheck.phpへジャンプ
-//bodyの宣言で呼び出し
 function checkJump() {
     if (empty($_POST) || isset($_POST['return'])) return;
     
@@ -374,7 +367,6 @@ function checkJump() {
     }      
 }
 //エラーがあればエラー一覧を表示
-//初回は処理を飛ばしたいので関数化
 function showError() {
     if (empty($_POST) || isset($_POST['return'])) return;
 

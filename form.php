@@ -22,35 +22,35 @@ class Error_Message
     );
  
     //エラーが一つでもあるか
-    private static $_hasError = false;
+    private static $_has_error = false;
 
     //生成されたエラーのテキストをすべて格納
-    private static $_allErrorString = array();
+    private static $_all_error_string = array();
 
     private $_name;  //エラー項目
     private $_kind;  //エラー内容
     private $_value; //'50'字以内などの値
 
-    public function __construct($errorName, $errorKind, $errorValue) {
-        $this->_name  = Error_Message::$_name_list[$errorName];
-        $this->_kind  = Error_Message::$_kind_list[$errorKind];
-        $this->_value = $errorValue;
+    public function __construct($error_name, $error_kind, $error_value) {
+        $this->_name  = Error_Message::$_name_list[$error_name];
+        $this->_kind  = Error_Message::$_kind_list[$error_kind];
+        $this->_value = $error_value;
 
-        Error_Message::$_hasError = true;
+        Error_Message::$_has_error = true;
 
         $this->_addErrorString();
     }
     
     //一つでも生成されたら、エラーがあるのでtrue
-    public static function hasError() { return Error_Message::$_hasError; }
+    public static function hasError() { return Error_Message::$_has_error; }
 
     //全エラーの文字列を取得
-    public static function getAllErrorString() { return Error_Message::$_allErrorString; }
+    public static function getAllErrorString() { return Error_Message::$_all_error_string; }
 
     //このエラーの表示を一覧に追加
     private function _addErrorString() {
-        $text      = sprintf('%sを%s%sしてください。', $this->_name, $this->_value, $this->_kind);
-        array_push(Error_Message::$_allErrorString, $text);
+        $text = sprintf('%sを%s%sしてください。', $this->_name, $this->_value, $this->_kind);
+        array_push(Error_Message::$_all_error_string, $text);
     }
 }
 
@@ -74,36 +74,36 @@ class Check_Function_Data
 
     //チェック関数に配列を渡すと、エラーの場合のみError_Infoのインスタンスを生成、渡された配列に追加
     //引数は　格納されるエラーの配列, 入力値, 要素のname, 閾値などの値
-    public static function checkIsNoText(&$errorArray, $data, $name) {           //必須入力チェック
+    public static function checkIsNoText(&$error_array, $data, $name) {           //必須入力チェック
         if (empty($data)) {
-            array_push($errorArray, new Error_Message($name, 'noText', ''));
+            array_push($error_array, new Error_Message($name, 'noText', ''));
             return true;
         }
         return false;
     }
-    public static function checkIsEmptyValue(&$errorArray, $data, $name, $emptyValue) {//必須入力チェック(空を表す文字列と一致しないか)
-        if ($data == $emptyValue) {
-            array_push($errorArray, new Error_Message($name, 'noText', ''));
+    public static function checkIsEmptyValue(&$error_array, $data, $name, $empty_value) {//必須入力チェック(空を表す文字列と一致しないか)
+        if ($data == $empty_value) {
+            array_push($error_array, new Error_Message($name, 'noText', ''));
             return true;
         }
         return false;
     }
-    public static function checkIsNoChoise(&$errorArray, $data, $name) {      //必須選択チェック
+    public static function checkIsNoChoise(&$error_array, $data, $name) {      //必須選択チェック
        if (empty($data)) {
-           array_push($errorArray, new Error_Message($name, 'noChoise', ''));
+           array_push($error_array, new Error_Message($name, 'noChoise', ''));
            return true;
        }
        return false;
     }
-    public static function checkIsOverText(&$errorArray, $data, $name, $value) {      //字数チェック
+    public static function checkIsOverText(&$error_array, $data, $name, $value) {      //字数チェック
         if (mb_strlen($data) > $value) {
-            array_push($errorArray, new Error_Message($name, 'overText', strval($value)));
+            array_push($error_array, new Error_Message($name, 'overText', strval($value)));
             return true;
         }
         return false;
     }
-    public static function checkIsIllegal(&$errorArray, $data, $name) {       //文法チェック
-        $patter;
+    public static function checkIsIllegal(&$error_array, $data, $name) {       //文法チェック
+        $pattern = '';
 
         switch ($name) {
         case 'mail_address'://メールアドレス
@@ -123,7 +123,7 @@ class Check_Function_Data
         }
         
         if (preg_match($pattern, $data) == false) {
-            array_push($errorArray, new Error_Message($name, 'illegal', ''));
+            array_push($error_array, new Error_Message($name, 'illegal', ''));
             return true;
         }
         return false;
@@ -135,18 +135,18 @@ class Check_Function_Data
     }
 
     //turnが_turnと一致するなら、チェックを行いエラーの有無を返す。エラーはerrorArrayにプッシュされる。
-    public function check(&$errorArray, $turn) { 
+    public function check(&$error_array, $turn) { 
         $func = $this->_function;
 
         switch ($this->_function) {
         case 'checkIsNoText':
         case 'checkIsNoChoise':
         case 'checkIsIllegal':
-            return Check_Function_Data::$func($errorArray, $this->_data, $this->_name);
+            return Check_Function_Data::$func($error_array, $this->_data, $this->_name);
         
         case 'checkIsOverText':
         case 'checkIsEmptyValue':
-            return Check_Function_Data::$func($errorArray, $this->_data, $this->_name, $this->_limit);
+            return Check_Function_Data::$func($error_array, $this->_data, $this->_name, $this->_limit);
 
         default: return false; 
         }
@@ -156,48 +156,47 @@ class Check_Function_Data
 //名前や性別など、一つの項目についてのエラーチェックを行う。
 class Error_Checker
 {
-    private $_showName;            //項目名　名前　性別　など
-    private $_errorArray;          //エラー一覧
-    private $_checkFuncArray;      //チェック一回分の情報　を複数持つ配列
-    private $_maxTurn;             //最遅チェック順
+    private $_show_name;            //項目名　名前　性別　など
+    private $_error_array;          //エラー一覧
+    private $_check_func_array;      //チェック一回分の情報　を複数持つ配列
+    private $_max_turn;             //最遅チェック順
 
-    public function __construct($showName, $checkFuncArray) {
-        $this->_showName       = $showName;
-        $this->_checkFuncArray = $checkFuncArray;
-        $this->_errorArray = array();
+    public function __construct($show_name, $check_func_array) {
+        $this->_show_name        = $show_name;
+        $this->_check_func_array = $check_func_array;
+        $this->_error_array = array();
 
         //最大turnを検索
-        $this->_maxTurn = 0;
-        foreach ($this->_checkFuncArray as $func) {
+        $this->_max_turn = 0;
+        foreach ($this->_check_func_array as $func) {
             $turn = 0;
             while ($func->isTurn($turn) == false) {
                 $turn++;
             }
 
-            if ($turn > $this->_maxTurn) $this->_maxTurn = $turn;
+            if ($turn > $this->_max_turn) $this->_max_turn = $turn;
         }
     }
 
     //この項目についてのエラーをチェックし、配列として返す。
     public function getCheckResult() {
-        $checkNum = 0;
-        $functions = $this->_checkFuncArray;
+        $functions = $this->_check_func_array;
 
-        for ($turn = 0; $turn <= $this->_maxTurn; $turn++) {//実行順番毎にチェック
-            $endFlag = false;
-            foreach ($functions as $funcData) {
-                if ($funcData->isTurn($turn) == false) continue;
+        for ($turn = 0; $turn <= $this->_max_turn; $turn++) {//実行順番毎にチェック
+            $end_flag = false;
+            foreach ($functions as $func_data) {
+                if ($func_data->isTurn($turn) == false) continue;
 
-                $isError = $funcData->check($this->_errorArray, $turn);
-                unset ($funcData);
+                $is_error = $func_data->check($this->_error_array, $turn);
+                unset ($func_data);
 
-                if ($isError || empty($functions)) {  //チェックを実行してエラーがあるor全てチェックした
-                    $endFlag = true;
+                if ($is_error || empty($functions)) {  //チェックを実行してエラーがあるor全てチェックした
+                    $endflag = true;
                 }
             }
-            if ($endFlag) break;
+            if ($end_flag) break;
         }
-        return $this->_errorArray;
+        return $this->_error_array;
     }
 }
 
@@ -207,18 +206,18 @@ function getSecureText($text) {
 }
 
 //最初の字が指定した文字群か
-function isMBCharsPosFirst($text, $charArray) {
-    foreach ($charArray as $char) {
+function isMBCharsPosFirst($text, $char_array) {
+    foreach ($char_array as $char) {
         $pos = mb_strpos($text, $char);
         if ($pos === 0) return true;
     }
     return false;
 }
 //最期の字が指定した文字群か
-function isMBCharsPosLast($text, $charArray) {
-    foreach ($charArray as $char) {
+function isMBCharsPosLast($text, $char_array) {
+    foreach ($char_array as $char) {
         $pos = mb_strrpos($text, $char);
-        if($pos === mb_strlen($text)-1) return true;
+        if ($pos === mb_strlen($text)-1) return true;
     }
     return false;
 }
@@ -247,29 +246,29 @@ function getFormatedText($text, $index) {
     if ($index == count($format_functions)) {
         return $text;
     } else {
-        $nextText = $format_functions[$index]($text);
+        $next_text = $format_functions[$index]($text);
         $index++;
-        return getFormatedText($nextText, $index);
+        return getFormatedText($next_text, $index);
     }
 }
 
 //入力値をフォーマットしたものを返す
-function getFormatedTextArray($textArray) {
-    $formatedArray = array();
+function getFormatedTextArray($text_array) {
+    $formated_array = array();
 
-    foreach ($textArray as $key => $value) {
+    foreach ($text_array as $key => $value) {
         if (is_array($value)) {
             $add = array();
-            foreach ($value as $arrayKey => $arrayValue) {
-                $add += array($arrayKey => getFormatedText($arrayValue, 0));
+            foreach ($value as $array_key => $array_value) {
+                $add += array($array_key => getFormatedText($array_value, 0));
             }
-            $formatedArray += array($key => $add);
+            $formated_array += array($key => $add);
         } else {
-            $formatedArray += array($key => getFormatedText($value, 0));
+            $formated_array += array($key => getFormatedText($value, 0));
         }
     }
     
-    return $formatedArray;
+    return $formated_array;
 }
 
 //値のエラーをチェックし、エラー一覧を返す
@@ -278,74 +277,74 @@ function checkErrors() {
 
     //エラーチェックの引数リスト作成
 
-    $nameCheckFunctions = array(
+    $name_check_functions = array(
         new Check_Function_Data('name_first', $formated_post['name_first'], 'checkIsNoText', 0),
         new Check_Function_Data('name_last',  $formated_post['name_last'] , 'checkIsNoText', 0),
         new Check_Function_Data('name_first', $formated_post['name_first'], 'checkIsOverText', 1, 50),
         new Check_Function_Data('name_last',  $formated_post['name_last'] , 'checkIsOverText', 1, 50)
     );
-    $nameChecker = new Error_Checker(
+    $name_checker = new Error_Checker(
         '名前',
-        $nameCheckFunctions
+        $name_check_functions
     );
 
-    $sexValue = isset($formated_post['sex']) ? $formated_post['sex'] : '';
-    $sexCheckFunctions = array(
-        new Check_Function_Data('sex', $sexValue, 'checkIsNoChoise', 0)
+    $sex_value = isset($formated_post['sex']) ? $formated_post['sex'] : '';
+    $sex_check_functions = array(
+        new Check_Function_Data('sex', $sex_value, 'checkIsNoChoise', 0)
     );
-    $sexChecker = new Error_Checker(
+    $sex_checker = new Error_Checker(
         '性別',
-        $sexCheckFunctions
+        $sex_check_functions
     );
 
-    $postCheckFunctions = array(
+    $post_check_functions = array(
         new Check_Function_Data('post_first', $formated_post['post_first'], 'checkIsNoText', 0),
         new Check_Function_Data('post_last',  $formated_post['post_last'],  'checkIsNoText', 1),
         new Check_Function_Data('post_first', $formated_post['post_first'], 'checkIsIllegal', 2),
         new Check_Function_Data('post_last',  $formated_post['post_last'],  'checkIsIllegal', 3)
     );
-    $postChecker = new Error_Checker(
+    $post_checker = new Error_Checker(
         '郵便番号',
-        $postCheckFunctions
+        $post_check_functions
     );
 
-    $prefectureCheckFunctions = array(
+    $prefecture_check_functions = array(
         new Check_Function_Data('prefecture', $formated_post['prefecture'], 'checkIsEmptyValue', 0, '--')
     );
-    $prefectureChecker = new Error_Checker(
+    $prefecture_checker = new Error_Checker(
         '都道府県',
-        $prefectureCheckFunctions
+        $prefecture_check_functions
     );
 
-    $mailAddressCheckFunctions = array(
+    $mail_address_check_functions = array(
         new Check_Function_Data('mail_address', $formated_post['mail_address'], 'checkIsNoText', 0),
         new Check_Function_Data('mail_address', $formated_post['mail_address'], 'checkIsIllegal', 1)
     );
-    $mailAddressChecker = new Error_Checker(
+    $mail_address_checker = new Error_Checker(
         'メールアドレス',
-        $mailAddressCheckFunctions
+        $mail_address_check_functions
     );
 
-    $hobbyCheckFunctions = array();
+    $hobby_check_functions = array();
     if (isset($formated_post['hobby']) && in_array('その他',$formated_post['hobby'])) {
-        $otherHobbyValue = isset($formated_post['other_descript'])? $formated_post['other_descript'] : '';
+        $other_hobby_value = isset($formated_post['other_descript'])? $formated_post['other_descript'] : '';
         array_push(
-            $hobbyCheckFunctions,
-            new Check_Function_Data('other_descript', $otherHobbyValue, 'checkIsNoText', 0)
+            $hobby_check_functions,
+            new Check_Function_Data('other_descript', $other_hobby_value, 'checkIsNoText', 0)
         );
     }
-    $hobbyChecker = new Error_Checker(
+    $hobby_checker = new Error_Checker(
         '趣味',
-        $hobbyCheckFunctions
+        $hobby_check_functions
     );
 
     $checkers = array(
-        $nameChecker,
-        $sexChecker,
-        $postChecker,
-        $prefectureChecker,
-        $mailAddressChecker,
-        $hobbyChecker
+        $name_checker,
+        $sex_checker,
+        $post_checker,
+        $prefecture_checker,
+        $mail_address_checker,
+        $hobby_checker
     );
 
     //エラー一覧を取得
@@ -370,9 +369,9 @@ function checkJump() {
 function showError() {
     if (empty($_POST) || isset($_POST['return'])) return;
 
-    if(Error_Message::hasError()) {
-        $errorTexts = Error_Message::getAllErrorString();
-        foreach ($errorTexts as $error) {
+    if (Error_Message::hasError()) {
+        $error_texts = Error_Message::getAllErrorString();
+        foreach ($error_texts as $error) {
             printf("%s<br>", $error);
         }
     } else {
@@ -438,11 +437,11 @@ function showPOST($key) {
     
     <label>性別:</label>
       <?php
-      $manChecked   = (getPOST('sex') == "男性")? "checked" : "";
-      $womanChecked = (getPOST('sex') == "女性")? "checked" : "";
+      $man_checked   = (getPOST('sex') == "男性")? "checked" : "";
+      $woman_checked = (getPOST('sex') == "女性")? "checked" : "";
       ?>
-    <input type="radio" name="sex" id="man" value="男性" <?php print $manChecked; ?>><label for="man">男性</label>
-    <input type="radio" name="sex" id="woman" value="女性" <?php print $womanChecked; ?>><label for="woman">女性</label>
+    <input type="radio" name="sex" id="man" value="男性" <?php print $man_checked; ?>><label for="man">男性</label>
+    <input type="radio" name="sex" id="woman" value="女性" <?php print $woman_checked; ?>><label for="woman">女性</label>
     <br>
 
     <label>郵便番号:</label>
@@ -482,13 +481,13 @@ function showPOST($key) {
     <?php
     $HOBBYS = array('music' => '音楽鑑賞','movie' => '映画鑑賞','other' => 'その他');
 
-    $checkList = getPOSTArray('hobby');
+    $check_list = getPOSTArray('hobby');
 
     foreach ($HOBBYS as $key => $elm) {
         $checked = '';
         
-        if (empty($checkList) == false) {
-            $checked  = (in_array($elm, $checkList)) ? 'checked' : '';
+        if (empty($check_list) == false) {
+            $checked  = (in_array($elm, $check_list)) ? 'checked' : '';
         }
         printf("<input type='checkbox' id='%s' name='hobby[]' value='%s' %s><label for='%s'>%s</label>",
                       $key, $elm, $checked, $key, $elm);
@@ -501,7 +500,7 @@ function showPOST($key) {
     <label>ご意見</label>
     <input type="text" id="opinion" name="opinion" value="<?php showPOST('opinion'); ?>">
 
-    <input type="submit" value="確認" onClick=>
+    <input type="submit" value="確認">
     </fieldset>
   </form>
 

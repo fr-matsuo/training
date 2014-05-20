@@ -211,8 +211,6 @@ function getSecureText($text) {
 
 //最初の字が指定した文字群か
 function isMBCharsPosFirst($text, $charArray) {
-    if(is_array($text)) print_r($text);
-
     foreach($charArray as $char) {
         $pos = mb_strpos($text, $char);
         if($pos === 0) return true;
@@ -221,8 +219,6 @@ function isMBCharsPosFirst($text, $charArray) {
 }
 //最期の字が指定した文字群か
 function isMBCharsPosLast($text, $charArray) {
-    if(is_array($text)) print_r($text);
-
     foreach($charArray as $char) {
         $pos = mb_strrpos($text, $char);
         if($pos === mb_strlen($text)-1) return true;
@@ -269,14 +265,11 @@ function getFormatedTextArray($textArray) {
         if (is_array($value)) {
             $add = array();
             foreach ($value as $arrayKey => $arrayValue) {
-                $elem   = array($arrayKey => getFormatedText($arrayValue, 0));
-                $addBuf = array($key => $elem);
-                $add    = array_merge($add, $addBuf);
+                $add += array($arrayKey => getFormatedText($arrayValue, 0));
             }
-            $formatedArray = array_merge($formatedArray, $add);
+            $formatedArray += array($key => $add);
         } else {
-            $add = array($key => getFormatedText($value, 0));
-            $formatedArray = array_merge($formatedArray, $add);
+            $formatedArray += array($key => getFormatedText($value, 0));
         }
     }
     
@@ -285,7 +278,7 @@ function getFormatedTextArray($textArray) {
 
 //値のエラーをチェックし、エラー一覧を返す
 function checkErrors() {
-    $formated_post = $_POST;//getFormatedTextArray($_POST);
+    $formated_post = getFormatedTextArray($_POST);
 
     //エラーチェックの引数リスト作成
     //引数の配列は、コンストラクタにnewで渡せなかったので別に記述
@@ -401,7 +394,13 @@ function getPOST($key) {
 }
 //getPOSTの配列版
 function getPOSTArray($key) {
-    return (isset($_POST[$key])) ? getFormatedText($_POST[$key], 0) : array();
+    $ret = array();
+    if(isset($_POST[$key]) == false || is_array($_POST[$key]) == false) return $ret;
+    
+    foreach($_POST[$key] as $key => $value) {
+        $ret += array($key => getFormatedText($value,0));
+    }
+    return $ret;
 }
 //ポストの値があれば表示、なければ空白を表示
 function showPOST($key) {
@@ -491,7 +490,7 @@ function showPOST($key) {
     <?php
     $HOBBYS = array('music' => '音楽鑑賞','movie' => '映画鑑賞','other' => 'その他');
 
-    $checkList = getPOST('hobby');
+    $checkList = getPOSTArray('hobby');
 
     foreach ($HOBBYS as $key => $elm) {
         $checked = '';
@@ -516,7 +515,7 @@ function showPOST($key) {
 
   <form method="post" name="checkForm" action="formCheck.php">
   <?php
-  $formated_post = /*$_POST;*/getFormatedTextArray($_POST);
+  $formated_post = getFormatedTextArray($_POST);
 
   $NAMES = array(
       'name_first', 'name_last', 'sex', 'post_first', 'post_last',
@@ -528,11 +527,12 @@ function showPOST($key) {
       printf("<input type='hidden' name='%s' value='%s'>", $name, $input);
   }
 
-  if(empty($checkList) == false) {
-      foreach ($checkList as $checked) {
-          printf("<input type='hidden' name='hobby[]' value='%s'>", getFormatedText($checked,0));
+  if(isset($_POST['hobby'])) {
+      foreach($_POST['hobby'] as $hobby) {
+          printf("<input type='hidden' name='hobby[]' value='%s'>", $hobby);
       }
   }
+
   showError();
   ?>
   </form>

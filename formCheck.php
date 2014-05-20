@@ -6,15 +6,13 @@ function getFormatedTextArray($array) {
 
     foreach($array as $key => $value) {
         if(is_array($value) == false) {
-            $add = array($key => htmlspecialchars($value));
-            $ret = array_merge($ret, $add);
+            $ret += array($key => htmlspecialchars($value));
         } else {
             $add = array();
             foreach ($value as $arrayKey => $arrayValue) {
-                $elem   = array($arrayKey => htmlspecialchars($arrayValue));
-                $addBuf = array($key => $elem);
-                $ret    = array_merge($add, $addBuf);
+                $add += array($arrayKey => htmlspecialchars($arrayValue));
             }
+            $ret += array($key => $add);
         }
     }
 
@@ -38,7 +36,7 @@ function getFormatedTextArray($array) {
   </header>
 
   <section>
-    <form name="form" method="post" action="formCheck.php">
+    <form name="form" method="post" action="finish.php">
       <p>
         名前：
         <?php
@@ -95,6 +93,7 @@ function getFormatedTextArray($array) {
       <input type="submit" value="送信">
       <input type="button" value="戻る" onClick="form.action=document.returnForm.submit();">
     </form>  
+
     <form name="returnForm" method="post" action="form.php">
       <input type='hidden' name='name_first'     value="<?php printf('%s', $formatedPOST['name_first']);   ?>">
       <input type='hidden' name='name_last'      value="<?php printf('%s', $formatedPOST['name_last']);    ?>">

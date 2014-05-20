@@ -63,13 +63,12 @@ class Check_Function_Data
     private $_turn;     //チェックする順番,郵便番号の前後が無いなどのエラー重複排除用
     private $_limit;    //閾値や空文字など
     
-    public function __construct() {
-        $args = func_get_args();
-        $this->_name     = $args[0];
-        $this->_data     = $args[1];
-        $this->_function = $args[2];
-        $this->_turn     = $args[3];
-        if (func_num_args() == 5) $this->_limit = $args[4];
+    public function __construct($name, $data, $function, $turn, $limit = 0) {
+        $this->_name     = $name;
+        $this->_data     = $data;
+        $this->_function = $function;
+        $this->_turn     = $turn;
+        $this->_limit    = $limit;
     }
 
     //チェック関数に配列を渡すと、エラーの場合のみError_Infoのインスタンスを生成、渡された配列に追加
@@ -81,6 +80,7 @@ class Check_Function_Data
         }
         return false;
     }
+
     public static function checkIsEmptyValue(&$error_array, $data, $name, $empty_value) {//必須入力チェック(空を表す文字列と一致しないか)
         if ($data == $empty_value) {
             array_push($error_array, new Error_Message($name, 'noChoise', ''));
@@ -88,6 +88,7 @@ class Check_Function_Data
         }
         return false;
     }
+
     public static function checkIsNoChoise(&$error_array, $data, $name) {      //必須選択チェック
        if (empty($data)) {
            array_push($error_array, new Error_Message($name, 'noChoise', ''));
@@ -95,6 +96,7 @@ class Check_Function_Data
        }
        return false;
     }
+
     public static function checkIsOverText(&$error_array, $data, $name, $value) {      //字数チェック
         if (mb_strlen($data) > $value) {
             array_push($error_array, new Error_Message($name, 'overText', strval($value)));
@@ -102,6 +104,7 @@ class Check_Function_Data
         }
         return false;
     }
+
     public static function checkIsIllegal(&$error_array, $data, $name) {       //文法チェック
         $pattern = '';
 
@@ -188,7 +191,7 @@ class Error_Checker
                 if ($func_data->isTurn($turn) == false) continue;
 
                 $is_error = $func_data->check($this->_error_array, $turn);
-                unset ($func_data);
+                unset($func_data);
 
                 if ($is_error || empty($functions)) {  //チェックを実行してエラーがあるor全てチェックした
                     $end_flag = true;
@@ -202,7 +205,7 @@ class Error_Checker
 
 //文字列を安全なものに変換したものを返す
 function getSecureText($text) {
-    return htmlspecialchars($text,ENT_QUOTES);
+    return htmlspecialchars($text, ENT_QUOTES);
 }
 
 //最初の字が指定した文字群か
@@ -213,6 +216,7 @@ function isMBCharsPosFirst($text, $char_array) {
     }
     return false;
 }
+
 //最期の字が指定した文字群か
 function isMBCharsPosLast($text, $char_array) {
     foreach ($char_array as $char) {
@@ -221,14 +225,15 @@ function isMBCharsPosLast($text, $char_array) {
     }
     return false;
 }
+
 //文字配列orその配列の要素をトリムしたものを返す
 function getTrimedText($text) {
-    $space = array(' ', '　');
+    $space_list = array(' ', '　');
 
-    while (isMBCharsPosFirst($text, $space)) {
+    while (isMBCharsPosFirst($text, $space_list)) {
         $text = mb_substr($text, 1);
     }
-    while (isMBCharsPosLast($text, $space)) {
+    while (isMBCharsPosLast($text, $space_list)) {
         $text = mb_substr($text, 0, mb_strlen($text)-1);
     }
 
@@ -365,6 +370,7 @@ function checkJump() {
         print "onLoad='document.checkForm.submit();'";
     }      
 }
+
 //エラーがあればエラー一覧を表示
 function showError() {
     if (empty($_POST) || isset($_POST['return'])) return;
@@ -383,6 +389,7 @@ function showError() {
 function getPOST($key) {
     return (isset($_POST[$key])) ? getFormatedText($_POST[$key], 0) : '';
 }
+
 //getPOSTの配列版
 function getPOSTArray($key) {
     $ret = array();
@@ -393,11 +400,11 @@ function getPOSTArray($key) {
     }
     return $ret;
 }
+
 //ポストの値があれば表示、なければ空白を表示
 function showPOST($key) {
     print getPOST($key);
 }
-
 ?>
 <!DOCTYPE html>
 

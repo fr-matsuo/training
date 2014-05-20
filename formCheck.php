@@ -10,7 +10,7 @@ function getFormatedTextArray($array) {
         } else {
             $add = array();
             foreach ($value as $arrayKey => $arrayValue) {
-                $add += array($arrayKey => htmlspecialchars($arrayValue));
+                $add += array($arrayKey => htmlspecialchars($arrayValue, ENT_QUOTES));
             }
             $ret += array($key => $add);
         }

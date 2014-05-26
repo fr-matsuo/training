@@ -11,11 +11,11 @@ function getFormatedTextArray($array) {
             $add = array();
             foreach ($value as $array_key => $array_value) {
                 $add += array($array_key => htmlspecialchars($array_value, ENT_QUOTES));
-            }    
+            }
             $ret += array($key => $add);
         }
     }
-    
+
     return $ret;
 }
 ?>

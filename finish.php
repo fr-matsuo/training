@@ -90,7 +90,7 @@ function getPrefectureID($pdo) {
 
   <nav>
     応募しました
-    <p><a href="index.html">TOPページへ</a><p>
+    <p><a href="index.php">TOPページへ</a><p>
   </nav>
 
   <footer>

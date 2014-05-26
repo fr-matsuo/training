@@ -15,10 +15,12 @@ class Error_Message
     );
     //エラーの内容
     private static $_kind_list = array(
-        'noText'   => '入力',
-        'noChoise' => '選択',
-        'overText' => '字以内で入力',
-        'illegal'  => '正しく入力'
+        'noText'    => '入力',
+        'noChoise'  => '選択',
+        'overText'  => '字以内で入力',
+        'illegal'   => '正しく入力',
+        'overLap'   => '変更'
+
     );
  
     //エラーが一つでもあるか
@@ -105,6 +107,38 @@ class Check_Function_Data
         return false;
     }
 
+    public static function checkIsOverLap(&$error_array, $data, $name) {
+        $dsn  = 'mysql:dbname=firstDB;host=127.0.0.1';
+        $user = 'root';
+        $pdo  = null;
+
+        try {
+            $pdo = new PDO($dsn, $user);
+        } catch (PDOException $e) {
+            printf('Connection Failed:%s', $e->getMessage());
+            exit();
+            return false;
+        }
+
+        try {
+            $query = $pdo->prepare("SELECT email FROM account_info WHERE email = :email");
+    
+            $email =  getFormatedText($data, 0);
+            $query->bindParam(':email', $email);
+            $query->execute();
+        } catch (Exception $e) {
+            printf('Get Data Failed:%s', $e->getMessage());
+            exit();
+        }
+
+        if (empty($query->fetch())) {
+            return false;
+        }
+       
+        array_push($error_array, new Error_Message($name, 'overLap', ''));
+        return true;
+    }
+
     public static function checkIsIllegal(&$error_array, $data, $name) {       //文法チェック
         $pattern = '';
 
@@ -145,6 +179,7 @@ class Check_Function_Data
         case 'checkIsNoText':
         case 'checkIsNoChoise':
         case 'checkIsIllegal':
+        case 'checkIsOverLap';
             return Check_Function_Data::$func($error_array, $this->_data, $this->_name);
         
         case 'checkIsOverText':
@@ -322,8 +357,9 @@ function checkErrors() {
     );
 
     $mail_address_check_functions = array(
-        new Check_Function_Data('mail_address', $formated_post['mail_address'], 'checkIsNoText', 0),
-        new Check_Function_Data('mail_address', $formated_post['mail_address'], 'checkIsIllegal', 1)
+        new Check_Function_Data('mail_address', $formated_post['mail_address'], 'checkIsNoText',  0),
+        new Check_Function_Data('mail_address', $formated_post['mail_address'], 'checkIsIllegal', 1),
+        new Check_Function_Data('mail_address', $formated_post['mail_address'], 'checkIsOverLap', 2)
     );
     $mail_address_checker = new Error_Checker(
         'メールアドレス',

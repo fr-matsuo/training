@@ -54,10 +54,15 @@ function sendDBModule($pdo) {
 }
 
 function getPrefectureID($pdo) {
-    $query = $pdo->prepare("
-        SELECT pref_id FROM prefecture_info
-        WHERE pref_name = :pref_name
-        ");
+    $sql = "
+        SELECT
+            pref_id
+        FROM
+            prefecture_info
+        WHERE
+            pref_name = :pref_id
+        ";
+    $query = $pdo->prepare($sql);
 
     $pref_name = $_POST['prefecture'];
     $query->bindParam(':pref_name', $pref_name);
@@ -68,6 +73,8 @@ function getPrefectureID($pdo) {
 
     return $pref_id;
 }
+
+sendPOST2DB();
 ?>
 
 <!DOCTYPE html>
@@ -81,9 +88,6 @@ function getPrefectureID($pdo) {
 </head>
 
 <body>
-  <?php
-      sendPOST2DB();
-  ?>
   <header>
     <h1>フォーム>完了</h1>
   </header>

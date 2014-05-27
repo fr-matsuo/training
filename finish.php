@@ -24,7 +24,7 @@ class DB_Connection {
     }
 }
 
-function sendPOST2DB() {
+function sendPOST2DB($post_data) {
     $dsn = 'mysql:dbname=firstDB;host=127.0.0.1';
     $user = 'root';
     $db_connection = new DB_Connection($dsn,$user);
@@ -32,14 +32,14 @@ function sendPOST2DB() {
 
     //登録
     try {
-        sendDBModule($pdo);
+        sendDBModule($pdo, $post_data);
     } catch (PDOException $e) {
         print('Add failed:'.$e->getMessage());
         var_dump($e->getMessage());
     }
 }
 
-function sendDBModule($pdo) {
+function sendDBModule($pdo, $post_data) {
     $query = $pdo->prepare("
         INSERT INTO account_info(
             first_name,
@@ -58,10 +58,10 @@ function sendDBModule($pdo) {
         )
         ");
 
-    $first_name = $_POST['name_first'];
-    $last_name  = $_POST['name_last'];
-    $email      = $_POST['mail_address'];
-    $pref_id    = getPrefectureID($pdo);
+    $first_name = $post_data['name_first'];
+    $last_name  = $post_data['name_last'];
+    $email      = $post_data['mail_address'];
+    $pref_id    = getPrefectureID($pdo, $post_data['prefecture']);
 
     $query->bindParam(':first_name', $first_name);
     $query->bindParam(':last_name' , $last_name);
@@ -71,7 +71,7 @@ function sendDBModule($pdo) {
     $result = $query->execute();
 }
 
-function getPrefectureID($pdo) {
+function getPrefectureID($pdo, $pref_name) {
     $sql = "
         SELECT
             pref_id
@@ -82,7 +82,6 @@ function getPrefectureID($pdo) {
         ";
     $query = $pdo->prepare($sql);
 
-    $pref_name = $_POST['prefecture'];
     $query->bindParam(':pref_name', $pref_name);
     $query->execute();
 
@@ -92,7 +91,7 @@ function getPrefectureID($pdo) {
     return $pref_id;
 }
 
-sendPOST2DB();
+sendPOST2DB($_POST);
 ?>
 
 <!DOCTYPE html>

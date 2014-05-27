@@ -19,7 +19,7 @@ class DB_Connection {
         $this->_pdo = null;
     }
 
-    function &getPDOReference() {
+    function getPDOReference() {
         return $this->_pdo;
     }
 }

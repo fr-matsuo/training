@@ -1,15 +1,35 @@
 <?php
+
+class DB_Connection {
+    private $_pdo;
+
+    function __construct($dsn, $user, $pass = '') {
+        try {
+            if (empty($pass)) {
+                $this->_pdo = new PDO($dsn, $user);
+            } else {
+                $this->_pdo = new PDO($dsn, $user, $pass);
+            }
+        } catch (PDOException $e) {
+            printf("Connection failed:%s", $e->getMessage());
+        }
+    }
+
+    function __destruct() {
+        $this->_pdo = null;
+    }
+
+    function &getPDOReference() {
+        return $this->_pdo;
+    }
+}
+
 function sendPOST2DB() {
     $dsn = 'mysql:dbname=firstDB;host=127.0.0.1';
     $user = 'root';
-    $pdo  = null;
-    //接続
-    try {
-        $pdo = new PDO($dsn, $user);
-    } catch (PDOException $e) {
-        print('Connection failed:'.$e->getMessage());
-        var_dump($pdo);
-    }
+    $db_connection = new DB_Connection($dsn,$user);
+    $pdo = $db_connection->getPDOReference();
+
     //登録
     try {
         sendDBModule($pdo);
@@ -17,8 +37,6 @@ function sendPOST2DB() {
         print('Add failed:'.$e->getMessage());
         var_dump($e->getMessage());
     }
-    //切断
-    $pdo = null;
 }
 
 function sendDBModule($pdo) {
@@ -60,7 +78,7 @@ function getPrefectureID($pdo) {
         FROM
             prefecture_info
         WHERE
-            pref_name = :pref_id
+            pref_name = :pref_name
         ";
     $query = $pdo->prepare($sql);
 

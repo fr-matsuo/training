@@ -1,23 +1,6 @@
 <?php
+require_once('format_text.php');
 $formated_post = getFormatedTextArray($_POST);
-
-function getFormatedTextArray($array) {
-    $ret = array();
-
-    foreach ($array as $key => $value) {
-        if (is_array($value) == false) {
-            $ret += array($key => htmlspecialchars($value));
-        } else {
-            $add = array();
-            foreach ($value as $array_key => $array_value) {
-                $add += array($array_key => htmlspecialchars($array_value, ENT_QUOTES));
-            }
-            $ret += array($key => $add);
-        }
-    }
-
-    return $ret;
-}
 ?>
 
 <!DOCTYPE html>

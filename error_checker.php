@@ -1,4 +1,7 @@
 <?php 
+
+require_once('DB_connection.php');
+
 class Error_Message
 {
     //エラー項目の名前
@@ -107,10 +110,11 @@ class Check_Function_Data
     }
 
     public static function checkIsOverLap(&$error_array, $data, $name) {
-        $dsn  = 'mysql:dbname=firstDB;host=127.0.0.1';
-        $user = 'root';
-        $pdo  = null;
-
+        $dsn           = 'mysql:dbname=firstDB;host=127.0.0.1';
+        $user          = 'root';
+        $db_connection = new DB_Connection($dsn,$user);
+        $pdo           = $db_connection->getPDO();
+/*
         try {
             $pdo = new PDO($dsn, $user);
         } catch (PDOException $e) {
@@ -118,7 +122,7 @@ class Check_Function_Data
             exit();
             return false;
         }
-
+*/
         try {
             $query = $pdo->prepare("SELECT email FROM account_info WHERE email = :email");
 

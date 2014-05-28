@@ -132,3 +132,5 @@ function getPOSTArray($key) {
 function showPOST($key) {
     print getPOST($key);
 }
+
+include_once('form.html.php');

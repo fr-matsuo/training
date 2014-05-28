@@ -71,4 +71,4 @@ function getPrefectureID($pdo, $pref_name) {
 
 sendPOST2DB($_POST);
 
-include_once('finish.html.php');
+include('finish.html.php');

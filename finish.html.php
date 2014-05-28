@@ -1,5 +1,3 @@
-<?php require_once('finish.php'); ?>
-
 <!DOCTYPE html>
 <html>
 <head>

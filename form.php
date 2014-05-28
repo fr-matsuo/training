@@ -133,4 +133,4 @@ function showPOST($key) {
     print getPOST($key);
 }
 
-include_once('form.html.php');
+include('form.html.php');

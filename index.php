@@ -14,7 +14,7 @@
   </header>
 
   <nav>
-    <p><a href="form.html.php">フォームを入力する</a></p>
+    <p><a href="form.php">フォームを入力する</a></p>
   </nav>
 
   <footer>

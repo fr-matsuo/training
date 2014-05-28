@@ -77,7 +77,7 @@ $formated_post = getFormatedTextArray($_POST);
       <input type="button" value="戻る" onClick="form.action=document.returnForm.submit();">
     </form>  
     
-    <form name="sendForm" method="post" action="finish.html.php">
+    <form name="sendForm" method="post" action="finish.php">
       <input type='hidden' name='name_first'     value="<?php printf('%s', $formated_post['name_first']);   ?>">
       <input type='hidden' name='name_last'      value="<?php printf('%s', $formated_post['name_last']);    ?>">
       <input type='hidden' name='sex'            value="<?php printf('%s', $formated_post['sex']);          ?>">
@@ -96,7 +96,7 @@ $formated_post = getFormatedTextArray($_POST);
       <input type='hidden' name='opinion'        value="<?php printf('%s', $formated_post['opinion']);        ?>">
     </form>
 
-    <form name="returnForm" method="post" action="form.html.php">
+    <form name="returnForm" method="post" action="form.php">
       <input type='hidden' name='name_first'     value="<?php printf('%s', $formated_post['name_first']);   ?>">
       <input type='hidden' name='name_last'      value="<?php printf('%s', $formated_post['name_last']);    ?>">
       <input type='hidden' name='sex'            value="<?php printf('%s', $formated_post['sex']);          ?>">

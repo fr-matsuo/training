@@ -16,7 +16,7 @@
 </header>
 
 <section>
-  <form method="post" name="form" action="form.html.php">
+  <form method="post" name="form" action="form.php">
     <fieldset>
     <legend>フォーム</legend>
 

@@ -1,9 +1,11 @@
 <?php
 
 class DB_Connection {
+    private static $_instance_list = array();
+ 
     private $_pdo;
 
-    function __construct($dsn, $user, $pass = '') {
+    private function __construct($dsn, $user, $pass = '') {
         try {
             if (empty($pass)) {
                 $this->_pdo = new PDO($dsn, $user);
@@ -15,6 +17,13 @@ class DB_Connection {
         }
     }
 
+    public static function getInstance($dsn, $user, $pass) {
+        if (empty(self::$_instance_list[$dsn][$user])) {
+            self::$_instance_list[$dsn][$user] = new self($dsn, $user, $pass);
+        }
+        return self::$_instance_list[$dsn][$user];
+    }
+
     function __destruct() {
         $this->_pdo = null;
     }
@@ -23,4 +32,3 @@ class DB_Connection {
         return $this->_pdo;
     }
 }
-

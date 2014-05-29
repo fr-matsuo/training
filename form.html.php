@@ -36,16 +36,7 @@
     <br>
 
     <label>都道府県:</label>
-
-    <select name="prefecture" id="prefecture" size=1 value="<?php showPOST('prefecture'); ?>">
-    <?php
-
-    foreach ($PREFECTURES as $elm) {
-        $selected = (getPOST('prefecture') == $elm) ? 'selected' : '';
-        printf("<option value='%s' %s>%s</option>", $elm, $selected, $elm);
-    }
-    ?>
-    </select>
+    <?php showPrefectures(); ?>
     <br>
     
     <label>メールアドレス:</label>
@@ -53,18 +44,7 @@
     <br>
 
     <label>趣味</label>
-    <?php
-    foreach ($HOBBYS as $key => $elm) {
-        $checked = '';
-        
-        if (empty($check_list) == false) {
-            $checked = (in_array($elm, $check_list)) ? 'checked' : '';
-        }
-        printf("<input type='checkbox' id='%s' name='hobby[]' value='%s' %s><label for='%s'>%s</label>",
-                      $key, $elm, $checked, $key, $elm);
-    }
-    ?>
-    <input type="text" name="other_descript" id="other_descript" value="<?php showPOST('other_descript'); ?>">
+    <?php showHobbys(); ?>
     <br>
 
     <label>ご意見</label>
@@ -74,26 +54,10 @@
     </fieldset>
   </form>
 
+  <?php showError(); ?>
+
   <form method="post" name="checkForm" action="formCheck.php">
-  <?php
-  foreach ($NAMES as $name) {
-      $input = (isset($formated_post[$name])) ? $formated_post[$name] : '';
-      printf("<input type='hidden' name='%s' value='%s'>", $name, $input);
-  }
-
-  if (isset($_POST['hobby'])) {
-      foreach ($_POST['hobby'] as $hobby) {
-          printf("<input type='hidden' name='hobby[]' value='%s'>", $hobby);
-      }
-  }
-
-  //その他の趣味の詳細が入力されていたら、その他にチェックを付与
-  if (!empty($formated_post['other_descript']) && !in_array('その他', $_POST['hobby'])) {
-      print "<input type='hidden' name='hobby[]' value='その他'>";
-  }
-
-  showError();
-  ?>
+  <?php writeHiddenParams(); ?>
   </form>
 
   <footer>

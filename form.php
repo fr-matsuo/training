@@ -158,4 +158,53 @@ function showPOST($key) {
     print getPOST($key);
 }
 
+function showPrefectures() {
+    global $PREFECTURES;
+    $name = 'prefecture';
+    $value = getPOST($name);
+    if (empty($value)) $value = '--';
+
+    printf("<select name='%s' id='%s' size=1 value='%s'>", $name, $name, $value);
+    foreach ($PREFECTURES as $elm) {
+        $selected = ($value == $elm) ? 'selected' : '';
+        printf("<option value='%s' %s>%s</option>", $elm, $selected, $elm);
+    }
+    print '</select>';
+}
+
+function showHobbys() {
+    global $HOBBYS;
+
+    foreach ($HOBBYS as $key => $elm) {
+        $checked = '';
+
+        if (empty($check_list) == false) {
+            $checked = (in_array($elm, $check_list)) ? 'checked' : '';
+        }
+        printf("<input type='checkbox' id='%s' name='hobby[]' value='%s' %s><label for='%s'>%s</label>",
+                      $key, $elm, $checked, $key, $elm);
+    }
+    printf("<input type='text' name='other_descript' id='other_descript value='%s'>", getPOST('other_descript'));
+}
+
+function writeHiddenParams() {
+    global $NAMES;
+    global $formated_post;
+
+    foreach ($NAMES as $name) {
+        $input = (isset($formated_post[$name])) ? $formated_post[$name] : '';
+        printf("<input type='hidden' name='%s' value='%s'>", $name, $input);
+    }
+    if (isset($_POST['hobby'])) {
+        foreach ($_POST['hobby'] as $hobby) {
+            printf("<input type='hidden' name='hobby[]' value='%s'>", $hobby);
+        }
+    }
+
+    //その他の趣味の詳細が入力されていたら、その他にチェックを付与
+    if (!empty($formated_post['other_descript']) && !in_array('その他', $_POST['hobby'])) {
+        print "<input type='hidden' name='hobby[]' value='その他'>";
+    }
+}
+
 include('form.html.php');

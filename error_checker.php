@@ -1,6 +1,5 @@
 <?php 
 
-require_once('DB_connection.php');
 require_once('check_function_data.php');
 
 //名前や性別など、一つの項目についてのエラーチェックを行う。

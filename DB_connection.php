@@ -5,7 +5,7 @@ class DB_Connection {
  
     private $_pdo;
 
-    private function __construct($dsn, $user, $pass = '') {
+    private function __construct($dsn, $user, $pass) {
         try {
             if (empty($pass)) {
                 $this->_pdo = new PDO($dsn, $user);
@@ -17,7 +17,7 @@ class DB_Connection {
         }
     }
 
-    public static function getInstance($dsn, $user, $pass) {
+    public static function getInstance($dsn, $user, $pass = '') {
         if (empty(self::$_instance_list[$dsn][$user])) {
             self::$_instance_list[$dsn][$user] = new self($dsn, $user, $pass);
         }

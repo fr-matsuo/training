@@ -5,7 +5,7 @@ require_once('DB_connection.php');
 function sendPOST2DB($post_data) {
     $dsn = 'mysql:dbname=firstDB;host=127.0.0.1';
     $user = 'root';
-    $db_connection = new DB_Connection($dsn,$user);
+    $db_connection = DB_Connection::getInstance($dsn,$user);
     $pdo = $db_connection->getPDO();
 
     //登録

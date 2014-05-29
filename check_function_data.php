@@ -1,5 +1,6 @@
 <?php
 require_once('error_message.php');
+require_once('DB_connection.php');
 
 //チェック関数一回実行分の情報を保持・実行し、ErrorInfoを生成する.
 class Check_Function_Data
@@ -54,7 +55,7 @@ class Check_Function_Data
     public static function checkIsOverLap(&$error_array, $data, $name) {
         $dsn           = 'mysql:dbname=firstDB;host=127.0.0.1';
         $user          = 'root';
-        $db_connection = new DB_Connection($dsn,$user);
+        $db_connection = DB_Connection::getInstance($dsn,$user);
         $pdo           = $db_connection->getPDO();
         
         try {

@@ -29,7 +29,7 @@ $NAMES = array(
 
 //値のエラーをチェックし、エラー一覧を返す
 function checkErrors() {
-    $formated_post = getFormatedTextArray($_POST);
+    global $formated_post;
 
     //エラーチェックの引数リスト作成
 
@@ -115,7 +115,8 @@ function checkErrors() {
 
 //次のページに行けるならジャンプする関数。入力をform.phpに戻し、エラーがないならformCheck.phpへジャンプ
 function checkJump() {
-    if (empty($_POST) || isset($_POST['return'])) return;
+    global $formated_post;
+    if (empty($formated_post) || isset($formated_post['return'])) return;
     
     checkErrors();
     if (Error_Message::hasError() == false ) {
@@ -125,7 +126,8 @@ function checkJump() {
 
 //エラーがあればエラー一覧を表示
 function showError() {
-    if (empty($_POST) || isset($_POST['return'])) return;
+    global $formated_post;
+    if (empty($formated_post) || isset($formated_post['return'])) return;
 
     if (Error_Message::hasError()) {
         $error_texts = Error_Message::getAllErrorString();
@@ -139,7 +141,8 @@ function showError() {
 
 //ポストデータがあればその文字列を、なければ空文字を返す
 function getPOST($key) {
-    return (isset($_POST[$key])) ? getFormatedText($_POST[$key], 0) : '';
+    global $formated_post;
+    return (isset($formated_post[$key])) ? $formated_post[$key] : '';
 }
 
 //getPOSTの配列版
@@ -202,7 +205,7 @@ function writeHiddenParams() {
     }
 
     //その他の趣味の詳細が入力されていたら、その他にチェックを付与
-    if (!empty($formated_post['other_descript']) && !in_array('その他', $_POST['hobby'])) {
+    if (!empty($formated_post['other_descript']) && !in_array('その他', $formated_post['hobby'])) {
         print "<input type='hidden' name='hobby[]' value='その他'>";
     }
 }

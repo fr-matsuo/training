@@ -1,34 +1,12 @@
 <?php
 
-class DB_Connection {
-    private $_pdo;
-
-    function __construct($dsn, $user, $pass = '') {
-        try {
-            if (empty($pass)) {
-                $this->_pdo = new PDO($dsn, $user);
-            } else {
-                $this->_pdo = new PDO($dsn, $user, $pass);
-            }
-        } catch (PDOException $e) {
-            printf("Connection failed:%s", $e->getMessage());
-        }
-    }
-
-    function __destruct() {
-        $this->_pdo = null;
-    }
-
-    function getPDOReference() {
-        return $this->_pdo;
-    }
-}
+require_once('DB_connection.php');
 
 function sendPOST2DB($post_data) {
     $dsn = 'mysql:dbname=firstDB;host=127.0.0.1';
     $user = 'root';
     $db_connection = new DB_Connection($dsn,$user);
-    $pdo = $db_connection->getPDOReference();
+    $pdo = $db_connection->getPDO();
 
     //登録
     try {
@@ -92,30 +70,5 @@ function getPrefectureID($pdo, $pref_name) {
 }
 
 sendPOST2DB($_POST);
-?>
 
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <link rel="stylesheet" type="text/css" href="common.css">
-  <link rel="stylesheet" type="text/css" href="finish.css">
-  <title>完了</title>
-</head>
-
-<body>
-  <header>
-    <h1>フォーム>完了</h1>
-  </header>
-
-  <nav>
-    応募しました
-    <p><a href="index.php">TOPページへ</a><p>
-  </nav>
-
-  <footer>
-    <p>Copyright 2014</p>
-  </footer>
-</body>
-</html>
+include('finish.html.php');

@@ -157,24 +157,21 @@ function showPOST($key, $post_data) {
     print getPOST($key, $post_data);
 }
 
-function showPrefectures($post_data) {
-    global $PREFECTURES;
+function showPrefectures($post_data, $prefecture_list) {
     $name = 'prefecture';
     $value = getPOST($name, $post_data);
     if (empty($value)) $value = '--';
 
     printf("<select name='%s' id='%s' size=1 value='%s'>", $name, $name, $value);
-    foreach ($PREFECTURES as $elm) {
+    foreach ($prefecture_list as $elm) {
         $selected = ($value == $elm) ? 'selected' : '';
         printf("<option value='%s' %s>%s</option>", $elm, $selected, $elm);
     }
     print '</select>';
 }
 
-function showHobbys($post_data) {
-    global $HOBBYS;
-
-    foreach ($HOBBYS as $key => $elm) {
+function showHobbys($post_data, $hobby_list) {
+    foreach ($hobby_list as $key => $elm) {
         $checked = '';
 
         if (empty($check_list) == false) {
@@ -186,10 +183,8 @@ function showHobbys($post_data) {
     printf("<input type='text' name='other_descript' id='other_descript value='%s'>", getPOST('other_descript', $post_data));
 }
 
-function writeHiddenParams($post_data) {
-    global $NAMES;
-
-    foreach ($NAMES as $name) {
+function writeHiddenParams($post_data, $name_list) {
+    foreach ($name_list as $name) {
         $input = (isset($post_data[$name])) ? $post_data[$name] : '';
         printf("<input type='hidden' name='%s' value='%s'>", $name, $input);
     }

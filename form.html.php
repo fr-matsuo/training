@@ -36,7 +36,7 @@
     <br>
 
     <label>都道府県:</label>
-    <?php showPrefectures($formated_post); ?>
+    <?php showPrefectures($formated_post, $PREFECTURES); ?>
     <br>
     
     <label>メールアドレス:</label>
@@ -44,7 +44,7 @@
     <br>
 
     <label>趣味</label>
-    <?php showHobbys($formated_post); ?>
+    <?php showHobbys($formated_post, $HOBBYS); ?>
     <br>
 
     <label>ご意見</label>
@@ -57,7 +57,7 @@
   <?php showError($formated_post); ?>
 
   <form method="post" name="checkForm" action="formCheck.php">
-  <?php writeHiddenParams($formated_post); ?>
+  <?php writeHiddenParams($formated_post, $NAMES); ?>
   </form>
 
   <footer>

@@ -46,11 +46,6 @@ function getRecordNum($pdo) {
     return intval($query->fetch()[0]);
 }
 
-function showTable($column_list, $record_list) {
-    $table = new Table($column_list, $record_list);
-    $table->construct();
-}
-
 function getQuery($sql, $pdo) {
     $query = $pdo->prepare($sql);
     $query->execute();
@@ -68,6 +63,11 @@ function getColumnNames($query) {
     }
 
     return $names;
+}
+
+function showTable($column_list, $record_list) {
+    $table = new Table($column_list, $record_list);
+    $table->construct();
 }
 
 function showPagingNavi($record_num) {

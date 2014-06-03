@@ -9,7 +9,7 @@ $column_list = null;
 $record_list = null;
 $record_num  = 0;
 
-$now_page = isset($_POST['page_num']) ? $_POST['page_num'] : 1;
+$now_page = isset($_GET['page_num']) ? $_GET['page_num'] : 1;
 
 function setDBData(&$column_list, &$record_list, &$record_num, $now_page) {
     $db_user = 'root';
@@ -77,8 +77,7 @@ function showPagingNavi($record_num) {
 
     for ($i = 1; $i <= $page_num; $i++) {
         printf("
-            <a href='#'
-            onClick='jumpPage(%d);'>%d</a>",
+            <a href='show_form.php?page_num=%d'>%d</a>",
             $i, $i);
         print ' ';
     }

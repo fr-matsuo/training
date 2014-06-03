@@ -9,21 +9,21 @@ $column_list = null;
 $record_list = null;
 $record_num  = 0;
 
-$page_num = isset($_POST['page_num']) ? $_POST['page_num'] : 1;
+$now_page = isset($_POST['page_num']) ? $_POST['page_num'] : 1;
 
-function setDBData(&$column_list, &$record_list, &$record_num, $page_num) {
+function setDBData(&$column_list, &$record_list, &$record_num, $now_page) {
     $db_user = 'root';
     $db_dsn  = 'mysql:dbname=firstDB;host=127.0.0.1';
 
     $connection = DB_Connection::getInstance($db_dsn, $db_user);
     $pdo        = $connection->getPDO();
     
-    setFormData($column_list, $record_list, $page_num, $pdo);
+    setFormData($column_list, $record_list, $now_page, $pdo);
     $record_num = getRecordNum($pdo);
 }
 
-function setFormData(&$column_list, &$record_list, $page_num, $pdo) {
-    $start = ($page_num - 1) * PAGE_RECORD_NUM;
+function setFormData(&$column_list, &$record_list, $now_page, $pdo) {
+    $start = ($now_page - 1) * PAGE_RECORD_NUM;
     $sql   = sprintf("
         SELECT *
         FROM   account_info
@@ -46,7 +46,7 @@ function getRecordNum($pdo) {
     return intval($query->fetch()[0]);
 }
 
-function showTable($column_list, $record_list ,$page_num) {
+function showTable($column_list, $record_list) {
     $table = new Table($column_list, $record_list);
     $table->construct();
 }
@@ -84,5 +84,5 @@ function showPagingNavi($record_num) {
     }
 }
 
-setDBData($column_list, $record_list, $record_num, $page_num);
+setDBData($column_list, $record_list, $record_num, $now_page);
 include('show_form.html.php');

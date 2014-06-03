@@ -37,7 +37,7 @@
   </header>
 
   <nav>
-    <?php showTable($column_list, $record_list, $page_num); ?>
+    <?php showTable($column_list, $record_list); ?>
     <?php showPagingNavi($record_num); ?>
   </nav>
 

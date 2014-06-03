@@ -29,7 +29,6 @@
       }
   -->
   </script>
-  </script>
 </head>
 
 <body>
@@ -39,7 +38,7 @@
 
   <nav>
     <?php showTable($column_list, $record_list, $page_num); ?>
-    <?php showPagingNavi($record_list); ?>
+    <?php showPagingNavi($record_num); ?>
   </nav>
 
   <footer>

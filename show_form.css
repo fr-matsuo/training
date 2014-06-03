@@ -1,17 +1,17 @@
 table {
-    border-collapse: collapse;
-    border: 1px solid;
+  border-collapse: collapse;
+  border: 1px solid;
 }
 
-table TH {
-    border      : 1px #ddd solid;
-    padding     : 5px;
-    text-align  : center;
-    font-weight : bold;
+table th {
+  border      : 1px #ddd solid;
+  padding     : 5px;
+  text-align  : center;
+  font-weight : bold;
 }
 
-table TD {
-    border     : 1px #ddd solid;
-    padding    : 5px;
-    text-align : center;
+table td {
+  border     : 1px #ddd solid;
+  padding    : 5px;
+  text-align : center;
 }

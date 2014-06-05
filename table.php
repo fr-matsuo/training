@@ -9,7 +9,7 @@ class Table {
         $this->_record_list = $record_list;
     }
 
-    public function construct() {
+    public function show() {
         print '<table>';
 
         print '<tr>';

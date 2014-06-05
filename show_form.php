@@ -67,7 +67,7 @@ function getColumnNames($query) {
 
 function showTable($column_list, $record_list) {
     $table = new Table($column_list, $record_list);
-    $table->construct();
+    $table->show();
 }
 
 function showPagingNavi($record_num) {

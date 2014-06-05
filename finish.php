@@ -1,11 +1,12 @@
 <?php
 
 require_once('DB_connection.php');
+require_once('prefecture_data.php');
 
 function sendPOST2DB($post_data) {
     $dsn = 'mysql:dbname=firstDB;host=127.0.0.1';
     $user = 'root';
-    $db_connection = new DB_Connection($dsn,$user);
+    $db_connection = DB_Connection::getInstance($dsn,$user);
     $pdo = $db_connection->getPDO();
 
     //登録
@@ -39,7 +40,7 @@ function sendDBModule($pdo, $post_data) {
     $first_name = $post_data['name_first'];
     $last_name  = $post_data['name_last'];
     $email      = $post_data['mail_address'];
-    $pref_id    = getPrefectureID($pdo, $post_data['prefecture']);
+    $pref_id    = Prefecture_Data::getPrefectureID($post_data['prefecture']);
 
     $query->bindParam(':first_name', $first_name);
     $query->bindParam(':last_name' , $last_name);
@@ -47,26 +48,6 @@ function sendDBModule($pdo, $post_data) {
     $query->bindParam(':pref_id'   , $pref_id);
 
     $result = $query->execute();
-}
-
-function getPrefectureID($pdo, $pref_name) {
-    $sql = "
-        SELECT
-            pref_id
-        FROM
-            prefecture_info
-        WHERE
-            pref_name = :pref_name
-        ";
-    $query = $pdo->prepare($sql);
-
-    $query->bindParam(':pref_name', $pref_name);
-    $query->execute();
-
-    $pref_id = intval($query->fetch()[0]);
-    $query->closeCursor();
-
-    return $pref_id;
 }
 
 sendPOST2DB($_POST);

@@ -36,7 +36,7 @@
     <br>
 
     <label>都道府県:</label>
-    <?php showPrefectures($formated_post, $PREFECTURES); ?>
+    <?php showPrefectures(); ?>
     <br>
     
     <label>メールアドレス:</label>

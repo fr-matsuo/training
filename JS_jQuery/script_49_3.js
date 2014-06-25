@@ -1,10 +1,12 @@
 $(function() {
-    var header = $("#header");
-    header.css("font-size", "30px");
+    $("#header").css("font-size", "30px");
 
-    var sample = "<p class='sample'>サンプル2です。</p>";
-    $('#msg').after(sample);
+    $('#msg').after("<p class='sample'>サンプル2です。</p>");
 
-    var after = "Copyright 2013";
-    $('#footer').text(after);
+    $('.sample').hover(
+        function() { $('.sample').css("background-color", "gray");  },
+        function() { $('.sample').css("background-color", "white"); }
+    );
+
+    $('#footer').text("Copyright 2013");
 });

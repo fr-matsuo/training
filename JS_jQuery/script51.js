@@ -1,25 +1,30 @@
-$(function(){
-   var json_data = undefined;
+$(function() {
+    $("#more").on("click", loadJson);
+    loadJson();
 
-    $.getJSON("data.JSON", function(data){
-        json_data = data;
-        addData();
-    });
+    function loadJson() {
+        $.ajax( {
+            url:"data.json",
+            dataType:"json"
+        } ).success(function(data, status, xhr) {
+            addData(data);
+        } ).error(function(xhr, status, error) {
+            alert("error");
+        } );
+    }
 
-    $("#more").on("click", addData);
-
-    function addData() {
-        var length = json_data.language.length;
+    function addData(data) {
+        var length = data.language.length;
         var mat    = $("#languageMat");
-        
+    
         for (var i = 0; i < length; i++) {
             var mat_col =
                 "<tr><td>"
-                    + json_data.language[i].id   +
+                    + data.language[i].id   +
                 "</td><td>"
-                    + json_data.language[i].name + 
+                    + data.language[i].name + 
                 "</td><td>"
-                    + json_data.language[i].kana + 
+                    + data.language[i].kana + 
                 "</td></tr>";
             mat.append(mat_col);
         }

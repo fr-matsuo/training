@@ -1,19 +1,27 @@
 $(function(){
+   var json_data = undefined;
+
     $.getJSON("data.JSON", function(data){
-        var length = data.language.length;
+        json_data = data;
+        addData();
+    });
+
+    $("#more").on("click", addData);
+
+    function addData() {
+        var length = json_data.language.length;
         var mat    = $("#languageMat");
         
         for (var i = 0; i < length; i++) {
             var mat_col =
                 "<tr><td>"
-                    + data.language[i].id   +
+                    + json_data.language[i].id   +
                 "</td><td>"
-                    + data.language[i].name + 
+                    + json_data.language[i].name + 
                 "</td><td>"
-                    + data.language[i].kana + 
+                    + json_data.language[i].kana + 
                 "</td></tr>";
             mat.append(mat_col);
         }
-        
-    });
+    }
 });

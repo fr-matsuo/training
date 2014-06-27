@@ -14,19 +14,19 @@ $(function() {
     }
 
     function addData(data) {
-        var length = data.language.length;
-        var mat    = $("#languageMat");
+        var mat      = $("#languageMat");
+        var add_data = "";
     
-        for (var i = 0; i < length; i++) {
-            var mat_col =
+        $.each (data.language, function(index, elm){
+            add_data +=
                 "<tr><td>"
-                    + data.language[i].id   +
+                    + elm.id   +
                 "</td><td>"
-                    + data.language[i].name + 
+                    + elm.name + 
                 "</td><td>"
-                    + data.language[i].kana + 
+                    + elm.kana + 
                 "</td></tr>";
-            mat.append(mat_col);
-        }
+        });
+        mat.append(add_data);
     }
 });

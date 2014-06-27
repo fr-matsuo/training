@@ -3,14 +3,14 @@ $(function() {
     loadJson();
 
     function loadJson() {
-        $.ajax( {
+        $.ajax({
             url:"data.json",
             dataType:"json"
-        } ).success(function(data, status, xhr) {
+        }).done(function(data, status, xhr){
             addData(data);
-        } ).error(function(xhr, status, error) {
+        }).fail(function(xhr, status, error){
             alert("error");
-        } );
+        });
     }
 
     function addData(data) {

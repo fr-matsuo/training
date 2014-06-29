@@ -6,13 +6,15 @@
   <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
   <script type="text/javascript">
   <!--
-      var text = 'HelloWorld!';
-      window.alert(text);
+    function alertText(data) {
+        var text = data;
+        window.alert(text);
+    }
   -->
   </script>
 </head>
 
-<body onLoad="( function func() { alert('HelloWorld!') }() );">
+<body onLoad="alertText('Hello World!');">
   <!-- header -->
   <header>
     <h1>jQueryサンプル</h1>

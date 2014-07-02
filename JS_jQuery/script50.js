@@ -1,6 +1,6 @@
 $(function(){
     $("form").submit(function(){
-        var input = $("input").val();
+        var input = $("input:text").val();
         showAlert(input);
     });
 });

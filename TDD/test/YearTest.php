@@ -25,4 +25,18 @@ class YearTest extends PHPUnit_Framework_TestCase {
         }
         $this->fail('asNormalYearTestIllegalYear');
     }
+
+    public function testLeapYearJudge() {
+        $leap_years  = array(4, 1996, 2020);
+        $other_years = array(3, 1998, 2000);
+
+        foreach($leap_years as $value) {
+            $year = new Year($value);
+            $this->assertTrue($year->isLeapYear());
+        }
+        foreach($other_years as $value) {
+            $year = new Year($value);
+            $this->assertFalse($year->isLeapYear());
+        }
+    }
 }

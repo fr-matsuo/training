@@ -9,7 +9,11 @@ class Year {
         $this->_year = $year;
     }
 
-    public function getYear(){
+    public function getYear() {
         return $this->_year;
+    }
+
+    public function isLeapYear() {
+        return true;
     }
 }

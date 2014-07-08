@@ -39,4 +39,21 @@ class YearTest extends PHPUnit_Framework_TestCase {
             $this->assertFalse($year->isLeapYear());
         }
     }
+
+    public function testToJpYear() {
+        $years = array(
+            1868 => '明治元年',
+            1911 => '明治44年',
+            1912 => '大正元年',
+            1925 => '大正14年',
+            1926 => '昭和元年',
+            1988 => '昭和63年',
+            1989 => '平成元年'
+        );
+
+        foreach ($years as $value => $jp_year) {
+            $year = new Year($value);
+            $this->assertEquals($year->toJpYear(), $jp_year);
+        }
+    }
 }

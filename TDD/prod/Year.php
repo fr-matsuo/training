@@ -16,4 +16,8 @@ class Year {
     public function isLeapYear() {
         return $this->_year % 4 === 0 && $this->_year % 100 !== 0;
     }
+
+    public function toJpYear() {
+        return '';
+    }
 }

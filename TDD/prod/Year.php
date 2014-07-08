@@ -1,9 +1,13 @@
 <?php
 
 class Year {
-    public function __construct($year) {}
+    private $_year;
+
+    public  function __construct($year) {
+        $this->_year = $year;
+    }
 
     public function getYear(){
-        return 2000;
+        return $this->_year;
     }
 }

@@ -87,4 +87,18 @@ class YearTest extends PHPUnit_Framework_TestCase {
             array(2000)
         );
     }
+
+    /**
+    * @dataProvider jpYearProvider
+    */
+    public function testJpYear($value, $jp_year) {
+        $year = new Year($value);
+        $this->assertEquals($year->toJpYear(), $jp_year);
+    }
+
+    public function jpYearProvider() {
+        return array(
+            array(2014, '平成26年')
+        );
+    }
 }

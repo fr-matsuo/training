@@ -99,7 +99,8 @@ class YearTest extends PHPUnit_Framework_TestCase {
     public function jpYearProvider() {
         return array(
             array(2014, '平成26年'),
-            array(2002, '平成14年')
+            array(2002, '平成14年'),
+            array(1993, '平成5年')
         );
     }
 }

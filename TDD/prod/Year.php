@@ -12,7 +12,6 @@ class Year {
     }
 
     public function getYear() {
-        if ($this->_year == 1234) return 1234;
-        return 5678;
+        return $this->_year;
     }
 }

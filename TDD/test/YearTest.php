@@ -31,6 +31,9 @@ class YearTest extends PHPUnit_Framework_TestCase {
     public function exceptionConstructYearProvider() {
         return array(
             array(''),
+            array(null),
+            array('a'),
+            array(array(123,234))
         );
     }
 }

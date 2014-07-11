@@ -20,8 +20,6 @@ class Year {
     }
 
     public function toJpYear() {
-        if ($this->_year == 1993) return '平成5年';
-        if ($this->_year == 2002) return '平成14年';
-        return '平成26年';
+        return '平成'.($this->_year - 1988).'年';
     }
 }

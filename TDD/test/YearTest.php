@@ -48,7 +48,8 @@ class YearTest extends PHPUnit_Framework_TestCase {
     public function getYearProvider() {
         return array(
             array(1234),
-            array(5678)
+            array(5678),
+            array(9012)
         );
     }
 }

@@ -14,4 +14,8 @@ class Year {
     public function getYear() {
         return $this->_year;
     }
+
+    public function isLeapYear(){
+        return true;
+    }
 }

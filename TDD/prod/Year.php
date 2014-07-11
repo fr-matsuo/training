@@ -20,9 +20,7 @@ class Year {
     }
 
     public function toJpYear() {
-        if ($this->_year == -1) return 'out of term';
-        if ($this->_year == 1910) return 'out of term';
-        if ($this->_year == 2015) return 'out of term';
+        if ($this->_year < 1911 || $this->_year > 2014) return 'out of term';
 
         $first_years = array(
             1911 => '大正',

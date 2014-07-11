@@ -103,7 +103,8 @@ class YearTest extends PHPUnit_Framework_TestCase {
             array(1993, '平成5年'),
             array(1989, '平成元年'),
             array(1988, '昭和63年'),
-            array(1970, '昭和45年')
+            array(1970, '昭和45年'),
+            array(1926, '昭和元年')
         );
     }
 }

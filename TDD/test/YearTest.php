@@ -36,4 +36,18 @@ class YearTest extends PHPUnit_Framework_TestCase {
             array(array(123,234))
         );
     }
+    
+    /**
+    * @dataProvider getYearProvider
+    */
+    public function testGetYear($value) {
+        $year = new Year($value);
+        $this->assertEquals($year->getYear(), $value);
+    }
+    
+    public function getYearProvider() {
+        return array(
+            array(1234)
+        );
+    }
 }

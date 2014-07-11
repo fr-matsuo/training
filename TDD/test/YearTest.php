@@ -52,4 +52,19 @@ class YearTest extends PHPUnit_Framework_TestCase {
             array(9012)
         );
     }
+
+
+    /**
+    * @dataProvider isLeapYearProvider
+    */
+    public function testIsLeapYear($value) {
+        $year = new Year($value);
+        $this->assertTrue($year->isLeapYear());
+    }
+    
+    public function isLeapYearProvider() {
+        return array(
+            array(3456)
+        );
+    }
 }

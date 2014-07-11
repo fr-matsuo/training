@@ -20,6 +20,8 @@ class Year {
     }
 
     public function toJpYear() {
+        if ($this->_year == -1) return 'out of term';
+
         $first_years = array(
             1911 => '大正',
             1926 => '昭和',

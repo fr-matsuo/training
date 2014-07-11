@@ -53,7 +53,6 @@ class YearTest extends PHPUnit_Framework_TestCase {
         );
     }
 
-
     /**
     * @dataProvider isLeapYearProvider
     */
@@ -68,6 +67,20 @@ class YearTest extends PHPUnit_Framework_TestCase {
             array(7890),
             array(9876),
             array(5432)
+        );
+    }
+
+    /**
+    * @dataProvider isNotLeapYearProvider
+    */
+    public function testIsNotLeapYear($value) {
+        $year = new Year($value);
+        $this->assertFalse($year->isLeapYear());
+    }
+    
+    public function isNotLeapYearProvider() {
+        return array(
+            array(1111)
         );
     }
 }

@@ -81,7 +81,10 @@ class YearTest extends PHPUnit_Framework_TestCase {
         return array(
             array(1111),
             array(1234),
-            array(7654)
+            array(7654),
+            array(100),
+            array(1500),
+            array(2000)
         );
     }
 }

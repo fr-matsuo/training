@@ -64,7 +64,6 @@ class YearTest extends PHPUnit_Framework_TestCase {
     public function isLeapYearProvider() {
         return array(
             array(3456),
-            array(7890),
             array(9876),
             array(5432)
         );

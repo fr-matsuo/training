@@ -6,4 +6,8 @@ class Year {
             throw new InvalidArgumentException('NAN Year...');
         }
     }
+
+    public function getYear() {
+        return 1234;
+    }
 }

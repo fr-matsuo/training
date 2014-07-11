@@ -121,7 +121,8 @@ class YearTest extends PHPUnit_Framework_TestCase {
 
     public function outJpEraProvider() {
         return array(
-            array('-1')
+            array('-1'),
+            array('1910')
         );
     }
 }

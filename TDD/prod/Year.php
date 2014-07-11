@@ -20,6 +20,7 @@ class Year {
     }
 
     public function toJpYear() {
+        if ($this->_year == 1916) return '大正5年';
         if ($this->_year == 1925) return '大正14年';
         if ($this->_year == 1926) return '昭和元年'; 
         if ($this->_year <= 1988) return '昭和'.($this->_year - 1925).'年';

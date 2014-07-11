@@ -100,7 +100,8 @@ class YearTest extends PHPUnit_Framework_TestCase {
         return array(
             array(2014, '平成26年'),
             array(2002, '平成14年'),
-            array(1993, '平成5年')
+            array(1993, '平成5年'),
+            array(1989, '平成元年')
         );
     }
 }

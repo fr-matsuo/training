@@ -110,4 +110,18 @@ class YearTest extends PHPUnit_Framework_TestCase {
             array(1911, '大正元年')
         );
     }
+
+    /**
+    * @dataProvider outJpEraProvider
+    */
+    public function testOutJpEra($value) {
+        $year = new Year($value);
+        $this->assertEquals($year->toJpYear(), 'out of term');
+    }
+
+    public function outJpEraProvider() {
+        return array(
+            array('-1')
+        );
+    }
 }

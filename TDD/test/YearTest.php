@@ -80,7 +80,9 @@ class YearTest extends PHPUnit_Framework_TestCase {
     
     public function isNotLeapYearProvider() {
         return array(
-            array(1111)
+            array(1111),
+            array(1234),
+            array(7654)
         );
     }
 }
